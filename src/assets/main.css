@@ -1,0 +1,90 @@
+@font-face {
+  font-family: "SFMono";
+  src: url('./SFMono-Regular-10.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.v-codemirror .cm-line {
+  font-family: "SFMono";
+}
+
+.v-codemirror .cm-focused {
+  outline: none;
+}
+
+body {
+  margin: auto;
+}
+
+.el-card .el-form-item__content {
+  flex-wrap: nowrap;
+}
+
+.full-size {
+  width: 100%;
+}
+
+code {
+  background-color: rgba(27, 31, 35, .05);
+  border-radius: 3px;
+  color: inherit;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+  font-size: 85%;
+  margin: 0;
+  padding: 3.2px 6.4px;
+}
+
+#app {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+}
+
+.el-card.box-card {
+  margin: 8px;
+  width: max-content;
+  display: inline-block;
+  vertical-align: top;
+  min-height: 280px;
+  min-width: 260px;
+}
+
+.el-form-right-btn-group>.el-form-item__content {
+  justify-content: right;
+}
+
+.content-right {
+  text-align: right;
+}
+
+.input-content-left .el-input .el-input__inner {
+  text-align: left;
+}
+
+.custom-scrollbar::-webkit-scrollbar,
+.custom-scrollbar *::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar,
+.custom-scrollbar *::-webkit-scrollbar-thumb {
+  background: #b3e19d;
+  border-radius: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar,
+.custom-scrollbar *::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  cursor: grab;
+}
+
+.box-card .show-info-btn {
+  cursor: pointer;
+  color: #E6A23C;
+}
+
+.box-card .show-info-btn:hover {
+  color: red;
+}

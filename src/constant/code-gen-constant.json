@@ -1,0 +1,120 @@
+{
+    "doc": {
+        "context": {
+            "tableInfo": {
+                "name": "表名 | string",
+                "comment": "表注释 | string",
+                "columns": [
+                    {
+                        "isId": "是否为主键 | boolean",
+                        "name": "列名 | string",
+                        "camelCaseName": "列名驼峰命名 | string",
+                        "comment": "列注释 | string",
+                        "maxStringLength": "字符串类型列最大长度 | number",
+                        "maxIntDigit": "浮点类型列整数最大位数 | number",
+                        "maxFractionDigit": "浮点类型列小数最大位数 | number",
+                        "isNullable": "列值是否可为NULL | boolean",
+                        "isUnsignedNumber": "是否是无符号数字类型列 | boolean",
+                        "langType": {
+                            "type": "对应语言类型,如int对应java的Integer | string",
+                            "package": "对应语言类型包名,如java.lang.Integer | string",
+                            "needImport": "对应语言类型包是否需要导入 | boolean",
+                            "isNumber": "是否是数字类型 | boolean",
+                            "isDecimal": "是否是小数类型 | boolean"
+                        }
+                    }
+                ],
+                "isCompositeId": "是否是复合主键 | boolean",
+                "idColumn": "主键列,同columns元素(复合主键该值为null) | object"
+            },
+            "moduleName": "模板模块名 | string",
+            "author": "作者 | string",
+            "className": "类名(表名转驼峰后首字母大写) | string",
+            "extraParams": "模板自定义参数键值 | object<string,string>",
+            "columnLangTypePackages": "对应语言实体类需要导入的包 | array"
+        },
+        "helpers": [
+            {
+                "name": "assign",
+                "description": "给当前上下文变量赋值/声明变量",
+                "demo": "{{#assign}}{\"ids\":[2,4,6]}{{/assign}}"
+            },
+            {
+                "name": "camelCase",
+                "description": "驼峰命名",
+                "demo": "{{camelCase className}}"
+            },
+            {
+                "name": "snakeCase",
+                "description": "下划线命名",
+                "demo": "{{snakeCase className}}"
+            },
+            {
+                "name": "kebabCase",
+                "description": "中划线命名",
+                "demo": "{{kebabCase className}}"
+            },
+            {
+                "name": "upperFirst",
+                "description": "首字母大写",
+                "demo": "{{upperFirst className}}"
+            },
+            {
+                "name": "lowerFirst",
+                "description": "首字母小写",
+                "demo": "{{lowerFirst className}}"
+            },
+            {
+                "name": "toLower",
+                "description": "转小写",
+                "demo": "{{toLower className}}"
+            },
+            {
+                "name": "toUpper",
+                "description": "转大写",
+                "demo": "{{toUpper className}}"
+            },
+            {
+                "name": "contains",
+                "description": "当前上下文是否包含指定值",
+                "demo": "{{#if (contains @root.ids value=\"{{id}}\")}}包含4(true){{/if}}"
+            },
+            {
+                "name": "formatNow",
+                "description": "格式化当前时间",
+                "demo": "{{formatNow 'YYYY-MM-dd'}}"
+            },
+            {
+                "name": "formatNowNormDatetime",
+                "description": "格式化当前时间",
+                "demo": "{{formatNowNormDatetime}}"
+            },
+            {
+                "name": "formatNowNormDatetimeDateSlash",
+                "description": "格式化当前时间",
+                "demo": "{{formatNowNormDatetimeDateSlash}}"
+            },
+            {
+                "name": "equals",
+                "description": "参数1===参数2",
+                "demo": "{{#if (equals author 'clboy')}}是作者{{/if}}"
+            },
+            {
+                "name": "lte",
+                "description": "参数1<参数2",
+                "demo": "{{#if (equals lte 1 2)}}1小于2{{/if}}"
+            },
+            {
+                "name": "gte",
+                "description": "参数1>参数2",
+                "demo": "{{#if (equals gte 2 1)}}2大于1{{/if}}"
+            }
+        ]
+    },
+    "languages": [
+        "java"
+    ],
+    "dbTypes": [
+        "mysql"
+    ]
+}
