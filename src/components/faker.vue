@@ -52,21 +52,3 @@ onMounted(() => {
     gen();
 })
 </script>
-
-<style>
-.faker-item li span {
-    display: inline-block;
-    line-height: 1rem;
-    height: 1rem;
-}
-
-.faker-item li span:first-child {
-    width: max-content;
-}
-
-.faker-item li span:nth-child(2) {
-    width: 180px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-</style>

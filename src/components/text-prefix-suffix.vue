@@ -1,5 +1,5 @@
 <template>
-    <el-card class="box-card" style="width: 600px;">
+    <el-card class="box-card">
         <template #header>
             <div class="card-header">
                 <span>文本加前后缀 </span>

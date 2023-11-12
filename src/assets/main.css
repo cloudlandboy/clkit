@@ -35,19 +35,22 @@ code {
   padding: 3.2px 6.4px;
 }
 
-#app {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: left;
+.kit-title {
+  padding: var(--el-menu-base-level-padding);
+  margin-right: 16px;
+}
+
+.kit-title a:last-child {
+  margin-left: 6px;
+  font-family: cursive;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: #dc392d;
 }
 
 .el-card.box-card {
-  margin: 8px;
-  width: max-content;
-  display: inline-block;
-  vertical-align: top;
-  min-height: 280px;
-  min-width: 260px;
+  width: 100%;
 }
 
 .el-form-right-btn-group>.el-form-item__content {

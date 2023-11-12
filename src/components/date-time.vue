@@ -1,5 +1,5 @@
 <template>
-    <el-card class="box-card" style="width:350px;">
+    <el-card class="box-card">
         <template #header>
             <div class="card-header">
                 <span>格式化当前时间 </span>

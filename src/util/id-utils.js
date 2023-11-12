@@ -16,4 +16,8 @@ export class AutoIncrementKey {
         this.value += this.step;
         return this.value;
     }
+
+    getStringKey() {
+        return this.getKey() + '';
+    }
 }

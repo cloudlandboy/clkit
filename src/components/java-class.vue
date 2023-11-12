@@ -1,5 +1,5 @@
 <template>
-    <el-card class="box-card" style="width: 1000px;" v-loading="loading">
+    <el-card class="box-card" v-loading="loading">
         <template #header>
             <div class="card-header">
                 <span>JAVA类处理</span>

@@ -127,7 +127,10 @@ function actionFindPid(type, value, noneMessage, resultTitle) {
     margin-left: 1rem;
 }
 
-.el-input {
-    width: 150px;
+.el-input,.el-input-number .el-input {
+    width: 350px;
+}
+.el-input-number {
+    width: 350px;
 }
 </style>
