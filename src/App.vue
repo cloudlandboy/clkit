@@ -8,7 +8,7 @@ import Process from './components/process.vue';
 import Faker from './components/faker.vue';
 import OfficeConvert from './components/office-convert.vue';
 import CrudCodeGen from './components/code_gen/crud-code-gen.vue';
-import TextPrefixSuffix from './components/text-prefix-suffix.vue';
+import ReplaceEachRow from './components/replace_each_row/inde.vue';
 import JavaClass from './components/java-class.vue';
 import { AutoIncrementKey } from "./util/id-utils";
 
@@ -46,7 +46,7 @@ const config = {
     ,
     {
       path: idGen.getStringKey(), title: '文本处理', children: [
-        { path: '/text-prefix-suffix', title: '加前后缀' }
+        { path: '/replace-each-row', title: '替换每一行' }
       ]
     },
   ],
@@ -57,7 +57,7 @@ const config = {
     { path: '/faker', component: Faker },
     { path: '/office-convert', component: OfficeConvert },
     { path: '/crud-code-gen', component: CrudCodeGen },
-    { path: '/text-prefix-suffix', component: TextPrefixSuffix },
+    { path: '/replace-each-row', component: ReplaceEachRow },
     { path: '/java-class', component: JavaClass },
     { path: '/lan-port-scan', component: LanPortScan },
   ]
