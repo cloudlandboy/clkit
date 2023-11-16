@@ -75,9 +75,10 @@ const integrationMenu = {
 }
 config.menus.push(integrationMenu);
 
+const menuRef = ref();
 const menuList = ref(config.menus);
 const defaultOpeneds = config.menus.map(m => m.path);
-const currentRouter = shallowRef(config.routes[0]);
+const currentRouter = shallowRef({ path: '' });
 const updateLoading = ref(false);
 
 function menuSelect(path) {
@@ -167,7 +168,8 @@ onMounted(() => {
           <el-avatar :src="config.iconSrc" v-if="config.iconSrc" style="vertical-align:middle;" />
           <a href="javascript:void(0);">{{ config.title }}</a>
         </div>
-        <el-menu :default-active="currentRouter.path" @select="menuSelect" :default-openeds="defaultOpeneds">
+        <el-menu ref="menuRef" :default-active="currentRouter.path" @select="menuSelect"
+          :default-openeds="defaultOpeneds">
           <el-sub-menu v-for="menu in menuList" :index="menu.path">
             <template #title>{{ menu.title }}</template>
             <el-menu-item v-for="subMenu in menu.children" :index="subMenu.path">{{ subMenu.title }}</el-menu-item>
