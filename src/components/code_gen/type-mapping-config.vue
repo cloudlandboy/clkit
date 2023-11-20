@@ -110,7 +110,8 @@ import { ref, onMounted } from "vue";
 import { FieldDef } from "../../util/object-utils";
 import { hasText } from "../../util/string-utils";
 import { languages, dbTypes } from "../../constant/code-gen-constant.json";
-import { create, findAll, remove, update } from '../../api/db-lang-type'
+import { create, findAll, remove, update, unlock } from '../../api/db-lang-type'
+import { ElMessageBox } from 'element-plus'
 
 const tableData = ref([]);
 
@@ -162,7 +163,10 @@ const fieldDef = new FieldDef({
 const form = ref(fieldDef.getObj());
 
 function copy(data) {
-
+    const copyData = JSON.parse(JSON.stringify(data));
+    delete copyData._id;
+    copyData.locked = false;
+    openSaveOrUpdate(copyData);
 }
 
 function openSaveOrUpdate(data) {
@@ -180,7 +184,15 @@ function removeAndRefresh(id) {
 }
 
 function openUnlockConfirm(data) {
-
+    ElMessageBox.confirm('确认要解锁吗?', '解锁提醒',
+        {
+            type: 'warning',
+            confirmButtonText: '确认',
+            cancelButtonText: '取消'
+        }
+    ).then(() => {
+        unlock(data._id).then(res => { fetchData() })
+    }).catch(() => { });
 }
 
 function submitSaveOrUpdate() {

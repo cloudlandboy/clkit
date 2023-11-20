@@ -23,3 +23,7 @@ export function update(id, data) {
 export function remove(id) {
     return axios.delete(url(id));
 }
+
+export function unlock(id) {
+    return axios.post(url(`unlock/${id}`));
+}
