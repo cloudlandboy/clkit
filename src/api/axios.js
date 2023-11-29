@@ -5,7 +5,8 @@ const state = {
     errNetworkNotifyLock: false
 }
 
-axios.defaults.baseURL = "http://127.0.0.1:28288";
+axios.defaults.baseURL = import.meta.env.VITE_SERVER_ADDRESS || '';
+axios.defaults.baseURL += '/api';
 
 axios.interceptors.response.use(res => {
     return res;

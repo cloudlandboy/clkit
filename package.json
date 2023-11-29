@@ -1,6 +1,6 @@
 {
   "name": "clboy-kit",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,7 @@
     "@codemirror/autocomplete": "^6.10.2",
     "@codemirror/lang-html": "^6.4.6",
     "@codemirror/lang-java": "^6.0.1",
+    "@codemirror/lang-javascript": "^6.2.1",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/lang-sql": "^6.5.4",
     "@codemirror/theme-one-dark": "^6.1.2",
@@ -24,12 +25,13 @@
     "dayjs": "^1.11.10",
     "element-plus": "^2.3.14",
     "lodash": "^4.17.21",
+    "pinia": "^2.1.7",
     "vue": "^3.3.4",
     "vue-codemirror": "^6.1.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.4",
-    "vite": "^4.4.9",
-    "java-parser": "^2.0.5"
+    "java-parser": "^2.0.5",
+    "vite": "^4.4.9"
   }
 }

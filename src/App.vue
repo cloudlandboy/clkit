@@ -1,93 +1,26 @@
 <script setup>
 import { ref, onMounted, onBeforeMount, h, shallowRef } from 'vue';
+import { useAppConfigStore } from "./stores/app-config";
 import Clipboard from 'clipboard';
-import Home from './components/home.vue';
-import DateTime from './components/date-time.vue';
-import LanPortScan from './components/lan-port-scan.vue';
-import Process from './components/process.vue';
-import Faker from './components/faker.vue';
-import OfficeConvert from './components/office-convert.vue';
-import CrudCodeGen from './components/code_gen/crud-code-gen.vue';
-import ReplaceEachRow from './components/replace_each_row/inde.vue';
-import JavaClass from './components/java-class.vue';
-import IntegrationManage from "./components/integration-manage.vue";
-import { AutoIncrementKey } from "./util/id-utils";
-import { findAllInstalled } from "./api/integration";
 import { checkUpdate, update as updateApp } from "./api/app";
 import { ElNotification, ElButton } from 'element-plus'
 
-const idGen = new AutoIncrementKey();
 
-
-const config = {
-  title: 'CLBOY工具箱',
-  iconSrc: '/author-avatar.png',
-  contextPath: '',
-  defaultPath: '/',
-  menus: [
-    {
-      path: idGen.getStringKey(), title: '代码生成', children: [
-        { path: '/crud-code-gen', title: '增删改查' },
-        { path: '/java-class', title: 'JAVA类处理' },
-      ]
-    },
-    {
-      path: idGen.getStringKey(), title: '系统相关', children: [
-        { path: '/lan-port-scan', title: '端口扫描' },
-        { path: '/process', title: '查杀进程' },
-      ]
-    },
-    {
-      path: idGen.getStringKey(), title: '数据生成', children: [
-        { path: '/faker', title: '个人资料' }
-      ]
-    },
-    {
-      path: idGen.getStringKey(), title: '格式转换', children: [
-        { path: '/format-now-time', title: '格式化当前时间' },
-        { path: '/office-convert', title: 'OFFICE转换' }
-      ]
-    }
-    ,
-    {
-      path: idGen.getStringKey(), title: '文本处理', children: [
-        { path: '/replace-each-row', title: '替换每一行' }
-      ]
-    },
-  ],
-  routes: [
-    { path: '/', view: Home, isComponent: true },
-    { path: '/format-now-time', view: DateTime, isComponent: true },
-    { path: '/process', view: Process, isComponent: true },
-    { path: '/faker', view: Faker, isComponent: true },
-    { path: '/office-convert', view: OfficeConvert, isComponent: true },
-    { path: '/crud-code-gen', view: CrudCodeGen, isComponent: true },
-    { path: '/replace-each-row', view: ReplaceEachRow, isComponent: true },
-    { path: '/java-class', view: JavaClass, isComponent: true },
-    { path: '/lan-port-scan', view: LanPortScan, isComponent: true },
-    { path: '/integration-manage', view: IntegrationManage, isComponent: true }
-  ]
-}
-const integrationMenu = {
-  path: idGen.getStringKey(), title: '集成', children: [
-    { path: '/integration-manage', title: '集成管理' },
-  ]
-}
-config.menus.push(integrationMenu);
-
+const appConfigStore = useAppConfigStore();
 const menuRef = ref();
-const menuList = ref(config.menus);
-const defaultOpeneds = config.menus.map(m => m.path);
+const iframeRef = ref();
+
+const defaultOpeneds = [appConfigStore.menuList[0].path];
 const currentRouter = shallowRef({ path: '' });
 const updateLoading = ref(false);
 
 function menuSelect(path) {
-  window.history.replaceState(null, "", config.contextPath + path);
+  window.history.replaceState(null, "", appConfigStore.config.contextPath + path);
   currentRouter.value = findRoute(path);
 }
 
 function findRoute(path) {
-  return config.routes.find(r => r.path === path);
+  return appConfigStore.routerList.find(r => r.path === path);
 }
 
 function checkAppUpdate() {
@@ -134,18 +67,25 @@ function checkAppUpdate() {
   })
 }
 
-onBeforeMount(() => {
-  findAllInstalled().then(res => {
-    res.data.forEach(item => {
-      integrationMenu.children.push({ path: `/integration/${item._id}`, title: item.name });
-      config.routes.push({ path: `/integration/${item._id}`, view: item.url, isComponent: false });
-    })
-  }).finally(() => {
-    const path = location.pathname.substring(config.contextPath.length - 1);
-    const route = findRoute(path);
-    menuSelect(route ? path : config.defaultPath);
-  })
+function iframeLoaded() {
+  try {
+    const iframeDocument = iframeRef.value.contentWindow.document;
+    const scriptElement = iframeDocument.createElement('script');
+    scriptElement.text = currentRouter.value.insertScript;
+    scriptElement.id = "clkit-insert-script";
+    iframeDocument.body.appendChild(scriptElement);
+  } catch (err) {
+    //ignore
+    console.error(err);
+  }
+}
 
+onBeforeMount(() => {
+  appConfigStore.renderMenu().finally(() => {
+    const path = location.pathname.substring(appConfigStore.config.contextPath.length - 1);
+    const route = findRoute(path);
+    menuSelect(route ? path : appConfigStore.config.defaultPath);
+  })
   checkAppUpdate();
 })
 
@@ -165,12 +105,13 @@ onMounted(() => {
     <el-row>
       <el-col :span="3">
         <div class="kit-title" @click="menuSelect('/')">
-          <el-avatar :src="config.iconSrc" v-if="config.iconSrc" style="vertical-align:middle;" />
-          <a href="javascript:void(0);">{{ config.title }}</a>
+          <el-avatar :src="appConfigStore.config.iconSrc" v-if="appConfigStore.config.iconSrc"
+            style="vertical-align:middle;" />
+          <a href="javascript:void(0);">{{ appConfigStore.config.title }}</a>
         </div>
         <el-menu ref="menuRef" :default-active="currentRouter.path" @select="menuSelect"
           :default-openeds="defaultOpeneds">
-          <el-sub-menu v-for="menu in menuList" :index="menu.path">
+          <el-sub-menu v-for="menu in appConfigStore.menuList" :index="menu.path">
             <template #title>{{ menu.title }}</template>
             <el-menu-item v-for="subMenu in menu.children" :index="subMenu.path">{{ subMenu.title }}</el-menu-item>
           </el-sub-menu>
@@ -179,8 +120,8 @@ onMounted(() => {
       <el-col :span="21">
         <div class="route-content">
           <component v-if="currentRouter.isComponent" :is="currentRouter.view" />
-          <iframe v-else :src="currentRouter.view" frameborder="0" allowfullscreen="true"
-            style="width: 100%;height: 800px;"></iframe>
+          <iframe v-else :src="currentRouter.view" frameborder="0" allowfullscreen="true" @load="iframeLoaded"
+            ref="iframeRef" style="width: 100%;height: 800px;"></iframe>
         </div>
       </el-col>
     </el-row>

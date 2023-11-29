@@ -28,9 +28,13 @@ export function remove(id) {
     return axios.delete(url(id));
 }
 
+export function install(id) {
+    return axios.post(url(`install/${id}`));
+}
+
 export const types = {
     "onlineUrl": {
-        label: '在线url',
+        label: '在线网址',
         needInstall: false
     },
     "downloadUrl": {
@@ -39,14 +43,6 @@ export const types = {
     },
     "diskPath": {
         label: '本地磁盘路径',
-        needInstall: true
-    },
-    "repo": {
-        label: 'Github仓库地址',
-        needInstall: true
-    },
-    "repoReleaseFile": {
-        label: 'Github仓库Release文件地址',
         needInstall: true
     }
 };
