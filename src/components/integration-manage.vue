@@ -6,63 +6,79 @@
                 <el-icon>
                     <InfoFilled />
                 </el-icon>
-                <el-button style="float: right;" @click="openAddOrEdit(null)">新增</el-button>
+                <div style="float: right;">
+                    <el-button :icon="Paperclip" color="#85ce61" circle @click="openAddOrEdit(null, '0')" />
+                    <el-button :icon="Folder" color="#ffa400" circle
+                        @click="openAddOrEdit(null, '0', INTEGRATION_TYPES.FOLDER.value)" />
+                </div>
             </div>
         </template>
-        <el-table :data="tableDataList" border style="width: 100%">
-            <el-table-column prop="name" label="名称" width="200" />
-            <el-table-column prop="url" :show-overflow-tooltip="true" label="下载地址" />
-            <el-table-column prop="index" :show-overflow-tooltip="true" label="主页地址" />
-            <el-table-column prop="type" label="类型" width="150">
-                <template #default="scope">
-                    {{ types[scope.row.type] ? types[scope.row.type].label : '未知' }}
-                </template>
-            </el-table-column>
-            <el-table-column label="状态" width="150">
-                <template #default="scope">
-                    <el-tag v-if="scope.row.installed" type="success" effect="dark">已安装</el-tag>
-                    <el-tag v-else type="info" effect="dark">未安装</el-tag>
-                </template>
-            </el-table-column>
-            <el-table-column label="操作">
-                <template #default="scope">
-                    <span v-if="types[scope.row.type] && types[scope.row.type].needInstall" style="margin-right: 12px;">
-                        <el-button v-if="scope.row.installed" size="small" type="warning"
-                            @click="doInstall(scope.row._id)">重新安装</el-button>
-                        <el-button v-else size="small" type="primary" @click="doInstall(scope.row._id)">安装</el-button>
-                    </span>
-                    <el-button size="small" @click="openAddOrEdit(scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger" @click="doRemove(scope.row._id)">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
 
+        <!-- 列表 -->
+        <el-tree :data="treeData" node-key="_id">
+            <template #default="{ data }">
+                <div style="display: flex;width: 100%;justify-content: space-between;">
+                    <div>
+                        <el-icon v-if="isFolder(data.type)" size="16" color="#ffa400"
+                            style="vertical-align: middle;margin-right: 16px;">
+                            <Folder />
+                        </el-icon>
+                        <el-icon v-else size="16" :color="data.installed ? '#85ce61' : '#909399'"
+                            style="vertical-align: middle;margin-right: 16px;">
+                            <Paperclip />
+                        </el-icon>
+                        <span>{{ data.name }}</span>
+                    </div>
+                    <div>
+                        <span v-if="needInstall(data.type)" style="margin-right: 12px;">
+                            <el-button v-if="data.installed" size="small" type="success"
+                                @click="doInstall(data._id)">重装</el-button>
+                            <el-button v-else size="small" type="info" @click="doInstall(data._id)">安装</el-button>
+                        </span>
+                        <span v-if="isFolder(data.type)" style="margin-right: 12px;">
+                            <el-button :icon="Paperclip" color="#85ce61" circle size="small"
+                                @click="openAddOrEdit(null, data._id)" />
+                            <el-button :icon="Folder" color="#ffa400" circle size="small"
+                                @click="openAddOrEdit(null, data._id, INTEGRATION_TYPES.FOLDER.value)" />
+                        </span>
+                        <el-button :icon="Edit" circle size="small" @click="openAddOrEdit(data, data.folderId)" />
+                        <el-button :icon="Right" color="#c0ebd7" circle size="small" @click="doMove" />
+                        <el-button v-if="!data.children || data.children.length === 0" type="danger" :icon="Delete" circle
+                            size="small" @click="doRemove(data._id)" />
+                    </div>
+                </div>
+            </template>
+        </el-tree>
 
         <!-- add or edit -->
         <el-dialog v-model="formDialogVisible" :title="form._id ? '修改' : '新增'" width="750px" :close-on-click-modal="false">
-            <el-form ref="formRef" :model="form" :rules="formRules" label-position="right" label-width="120px">
-                <el-form-item label="菜单名称" prop="name">
+            <el-form ref="formRef" :model="form" :rules="formRules" :validate-on-rule-change="false" label-position="right"
+                label-width="120px">
+                <el-form-item :label="isFolder(form.type) ? '文件夹名称' : '菜单名称'" prop="name">
                     <el-input v-model="form.name" placeholder="自定义唯一菜单名称" :validate-event="false" clearable />
-                </el-form-item>
-                <el-form-item label="地址类型" prop="type">
-                    <el-select v-model="form.type" style="width: 100%;">
-                        <el-option v-for="(item, key) in types" :key="key" :label="item.label" :value="key" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="地址" prop="url">
-                    <el-input v-model="form.url" placeholder="下载地址" :validate-event="false" clearable />
                 </el-form-item>
                 <el-form-item label="排序值" prop="sortValue">
                     <el-input-number v-model="form.sortValue" :validate-event="false" />
                 </el-form-item>
-                <el-form-item label="index路径" prop="index" v-if="form.type !== 'onlineUrl'">
-                    <el-input v-model="form.index" placeholder="主页路径" :validate-event="false" clearable />
-                </el-form-item>
-                <el-form-item label="插入脚本" prop="insertScript" v-if="form.type !== 'onlineUrl'">
-                    <codemirror v-model="form.insertScript" placeholder="菜单激活时插入到iframe的script"
-                        :extensions="scriptExtensions" style="min-height: 150px;border: 1px dotted #b1b3b8;width: 100%;"
-                        class="custom-scrollbar hiden-cm-lineNumbers" />
-                </el-form-item>
+                <div v-show="!isFolder(form.type)">
+                    <el-form-item label="地址类型" prop="type">
+                        <el-select v-model="form.type" style="width: 100%;">
+                            <el-option v-show="!item.ve(INTEGRATION_TYPES.FOLDER.value)" v-for="item in INTEGRATION_TYPES"
+                                :key="item.value" :label="item.label" :value="item.value" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="地址" prop="url">
+                        <el-input v-model="form.url" placeholder="下载地址" :validate-event="false" clearable />
+                    </el-form-item>
+                    <el-form-item label="index路径" prop="index" v-if="!INTEGRATION_TYPES.ONLINE_URL.ve(form.type)">
+                        <el-input v-model="form.index" placeholder="主页路径" :validate-event="false" clearable />
+                    </el-form-item>
+                    <el-form-item label="插入脚本" prop="insertScript" v-if="!INTEGRATION_TYPES.ONLINE_URL.ve(form.type)">
+                        <codemirror v-model="form.insertScript" placeholder="菜单激活时插入到iframe的script"
+                            :extensions="scriptExtensions" style="min-height: 150px;border: 1px dotted #b1b3b8;width: 100%;"
+                            class="custom-scrollbar hiden-cm-lineNumbers" />
+                    </el-form-item>
+                </div>
                 <el-form-item class="el-form-right-btn-group">
                     <el-button type="primary" @click="submitSaveOrUpdate">{{ form._id ? '更新' : '保存' }}</el-button>
                     <el-button @click="formDialogVisible = false">取消</el-button>
@@ -74,27 +90,34 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useAppConfigStore } from "@/stores/app-config";
-import { FieldDef } from "../util/object-utils";
-import { hasText } from "../util/string-utils";
-import { types, create, update, remove, findAll, install } from "../api/integration";
-import { ElNotification } from "element-plus";
+import { FieldDef, copyProperties } from "../util/object-utils";
+import { INTEGRATION_TYPES, INTEGRATION_TYPE_DICT } from "../constant/dict.constants";
+import { create, update, remove, getTree, install } from "../api/integration";
+import { ElMessage, ElNotification } from "element-plus";
 import { javascript, javascriptLanguage } from '@codemirror/lang-javascript'
+import { Delete, Edit, Paperclip, Folder, Right } from '@element-plus/icons-vue'
 
 const scriptExtensions = [javascript(), javascriptLanguage];
 const appConfigStore = useAppConfigStore();
 
 const installLoading = ref(false);
-const formRules = ref({
+const folderRules = {
+    name: [{ required: true, message: '文件夹名称不能为空' }],
+}
+const menuRules = {
     name: [{ required: true, message: '菜单名称不能为空' }],
     type: [{ required: true, message: '类型必选' }],
     url: [{ required: true, message: '下载地址不能为空' }]
-});
+}
+const formRules = ref(menuRules);
 
-const tableDataList = ref([]);
+const treeData = ref([]);
 
 const formFieldDef = new FieldDef({
+    _id: null,
+    folderId: '0',
     name: '',
-    type: 'onlineUrl',
+    type: INTEGRATION_TYPES.ONLINE_URL.value,
     url: '',
     index: '',
     sortValue: 0,
@@ -109,17 +132,22 @@ const form = ref(formFieldDef.getObj());
 const formDialogVisible = ref(false);
 
 function fetchData() {
-    findAll().then(res => {
-        tableDataList.value = res.data;
+    getTree().then(res => {
+        treeData.value = res.data;
     })
 }
 
-function openAddOrEdit(data) {
+function openAddOrEdit(data, folderId, type) {
     if (data) {
-        form.value = data;
+        form.value = copyProperties(data, formFieldDef.getObj());
     } else {
         form.value = formFieldDef.getObj();
+        if (type) {
+            form.value.type = type;
+        }
     }
+    form.value.folderId = folderId;
+    formRules.value = isFolder(form.value.type) ? folderRules : menuRules;
     formDialogVisible.value = true;
 }
 
@@ -127,9 +155,6 @@ function submitSaveOrUpdate() {
     formRef.value.validate(isValid => {
         if (!isValid) {
             return;
-        }
-        if (form.value.type === 'onlineUrl' && !hasText(form.value.index)) {
-            form.value.index = 'index.html';
         }
         if (form.value._id) {
             update(form.value._id, form.value).then(() => {
@@ -166,6 +191,19 @@ function doRemove(id) {
         fetchData();
         appConfigStore.renderMenu();
     })
+}
+
+function doMove() {
+    ElMessage.warning('功能待开发中...');
+}
+
+function isFolder(value) {
+    return INTEGRATION_TYPES.FOLDER.ve(value);
+}
+
+function needInstall(value) {
+    const lt = INTEGRATION_TYPE_DICT.findByValue(value);
+    return lt && lt.needInstall;
 }
 
 onMounted(() => {

@@ -4,8 +4,11 @@ import { useAppConfigStore } from "./stores/app-config";
 import Clipboard from 'clipboard';
 import { checkUpdate, update as updateApp } from "./api/app";
 import { ElNotification, ElButton } from 'element-plus'
+import TreeMenu from "./components/tree-menu.vue";
 
-
+const menuCollapse = ref(false);
+const menuColSpan = ref(3);
+const viewColSpan = ref(21);
 const appConfigStore = useAppConfigStore();
 const menuRef = ref();
 const iframeRef = ref();
@@ -17,10 +20,24 @@ const updateLoading = ref(false);
 function menuSelect(path) {
   window.history.replaceState(null, "", appConfigStore.config.contextPath + path);
   currentRouter.value = findRoute(path);
+  if (!currentRouter.value.isComponent) {
+    toggleMenuCollapse(true);
+  }
 }
 
 function findRoute(path) {
   return appConfigStore.routerList.find(r => r.path === path);
+}
+
+function toggleMenuCollapse(collapse) {
+  menuCollapse.value = collapse;
+  if (collapse) {
+    menuColSpan.value = 1;
+    viewColSpan.value = 23;
+  } else {
+    menuColSpan.value = 3;
+    viewColSpan.value = 21;
+  }
 }
 
 function checkAppUpdate() {
@@ -103,21 +120,28 @@ onMounted(() => {
 <template>
   <div class="clboy-kit-container" v-loading.fullscreen.lock="updateLoading" element-loading-text="更新中...">
     <el-row>
-      <el-col :span="3">
+      <el-col :span="menuColSpan">
         <div class="kit-title" @click="menuSelect('/')">
           <el-avatar :src="appConfigStore.config.iconSrc" v-if="appConfigStore.config.iconSrc"
             style="vertical-align:middle;" />
-          <a href="javascript:void(0);">{{ appConfigStore.config.title }}</a>
+          <a v-show="!menuCollapse" href="javascript:void(0);">{{ appConfigStore.config.title }}</a>
         </div>
-        <el-menu ref="menuRef" :default-active="currentRouter.path" @select="menuSelect"
-          :default-openeds="defaultOpeneds">
-          <el-sub-menu v-for="menu in appConfigStore.menuList" :index="menu.path">
-            <template #title>{{ menu.title }}</template>
-            <el-menu-item v-for="subMenu in menu.children" :index="subMenu.path">{{ subMenu.title }}</el-menu-item>
-          </el-sub-menu>
+        <div style="position: relative;height: 24px;">
+          <el-icon v-show="menuCollapse" style="cursor: pointer;position:absolute;right: 38px;"
+            @click="toggleMenuCollapse(false)">
+            <Menu />
+          </el-icon>
+          <el-icon v-show="!menuCollapse" style="cursor: pointer;position:absolute;right: 5px;"
+            @click="toggleMenuCollapse(true)" size="large">
+            <Fold />
+          </el-icon>
+        </div>
+        <el-menu ref="menuRef" :default-active="currentRouter.path" @select="menuSelect" :default-openeds="defaultOpeneds"
+          :collapse="menuCollapse" :collapse-transition="false">
+          <tree-menu :menuList="appConfigStore.menuList" :menuCollapse="menuCollapse" />
         </el-menu>
       </el-col>
-      <el-col :span="21">
+      <el-col :span="viewColSpan">
         <div class="route-content">
           <component v-if="currentRouter.isComponent" :is="currentRouter.view" />
           <iframe v-else :src="currentRouter.view" frameborder="0" allowfullscreen="true" @load="iframeLoaded"

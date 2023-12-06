@@ -32,17 +32,10 @@ export function install(id) {
     return axios.post(url(`install/${id}`));
 }
 
-export const types = {
-    "onlineUrl": {
-        label: '在线网址',
-        needInstall: false
-    },
-    "downloadUrl": {
-        label: '文件下载地址',
-        needInstall: true
-    },
-    "diskPath": {
-        label: '本地磁盘路径',
-        needInstall: true
-    }
-};
+export function getTree() {
+    return axios.get(url('tree'));
+}
+
+export function getInstalledTree() {
+    return axios.get(url('installed_tree'));
+}

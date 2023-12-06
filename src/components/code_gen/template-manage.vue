@@ -368,7 +368,6 @@ function openUnlockConfirm(template) {
 }
 
 function unlockTemplateAndRefresh() {
-    console.log(prepareUnlockTemplate);
     if (confirmUnlockTemplateKey.value !== prepareUnlockTemplate.value.key) {
         ElMessage.error('确认解锁失败');
         return;

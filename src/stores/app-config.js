@@ -11,7 +11,8 @@ import ReplaceEachRow from '@/components/replace_each_row/inde.vue';
 import JavaClass from '@/components/java-class.vue';
 import IntegrationManage from "@/components/integration-manage.vue";
 import { AutoIncrementKey } from "@/util/id-utils";
-import { findAllInstalled } from "@/api/integration";
+import { getInstalledTree } from "@/api/integration";
+import { INTEGRATION_TYPES } from "../constant/dict.constants";
 
 const serverAddressPrefix = import.meta.env.VITE_SERVER_ADDRESS || '';
 function serverIntegrationUrl(id, index) {
@@ -80,19 +81,29 @@ export const useAppConfigStore = defineStore('appConfig', () => {
     const menuList = ref([].concat(config.staticMenus, integrationMenu));
     const routerList = shallowRef([].concat(config.staticRoutes));
 
+    function collectIntegrationMenu(treeNode, menuBucket, routerBucket) {
+        const path = `/integration/${treeNode._id}`;
+        const menu = { path, title: treeNode.name };
+        menuBucket.push(menu);
+        if (INTEGRATION_TYPES.FOLDER.ve(treeNode.type)) {
+            menu.children = [];
+            treeNode.children.map(c => collectIntegrationMenu(c, menu.children, routerBucket));
+        } else {
+            routerBucket.push({
+                path: path,
+                view: INTEGRATION_TYPES.ONLINE_URL.ve(treeNode.type) ? treeNode.url : serverIntegrationUrl(treeNode._id, treeNode.index),
+                isComponent: false,
+                insertScript: treeNode.insertScript
+            });
+        }
+    }
+
     async function renderMenu() {
         const integrationMenuChildren = [{ path: '/integration-manage', title: '集成管理' }];
         const integrationRouters = [];
-        const res = await findAllInstalled();
+        const res = await getInstalledTree();
         res.data.forEach(item => {
-            const path = `/integration/${item._id}`;
-            integrationMenuChildren.push({ path: path, title: item.name });
-            integrationRouters.push({
-                path: path,
-                view: item.type === 'onlineUrl' ? item.url : serverIntegrationUrl(item._id, item.index),
-                isComponent: false,
-                insertScript: item.insertScript
-            });
+            collectIntegrationMenu(item, integrationMenuChildren, integrationRouters);
         })
         integrationMenu.children = integrationMenuChildren;
         menuList.value = [].concat(config.staticMenus, integrationMenu);
