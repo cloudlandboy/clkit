@@ -91,3 +91,7 @@ code {
 .box-card .show-info-btn:hover {
   color: red;
 }
+
+.display-none {
+  display: none;
+}

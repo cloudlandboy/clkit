@@ -15,7 +15,8 @@
         </template>
 
         <!-- 列表 -->
-        <el-tree :data="treeData" node-key="_id">
+        <el-tree :data="treeData" node-key="_id" :default-expanded-keys="defaultExpand" :accordion="true"
+            @node-expand="nodeExpand" @node-collapse="nodeCollapse">
             <template #default="{ data }">
                 <div style="display: flex;width: 100%;justify-content: space-between;">
                     <div>
@@ -32,19 +33,19 @@
                     <div>
                         <span v-if="needInstall(data.type)" style="margin-right: 12px;">
                             <el-button v-if="data.installed" size="small" type="success"
-                                @click="doInstall(data._id)">重装</el-button>
-                            <el-button v-else size="small" type="info" @click="doInstall(data._id)">安装</el-button>
+                                @click.stop="doInstall(data._id)">重装</el-button>
+                            <el-button v-else size="small" type="info" @click.stop="doInstall(data._id)">安装</el-button>
                         </span>
                         <span v-if="isFolder(data.type)" style="margin-right: 12px;">
                             <el-button :icon="Paperclip" color="#85ce61" circle size="small"
-                                @click="openAddOrEdit(null, data._id)" />
+                                @click.stop="openAddOrEdit(null, data._id)" />
                             <el-button :icon="Folder" color="#ffa400" circle size="small"
-                                @click="openAddOrEdit(null, data._id, INTEGRATION_TYPES.FOLDER.value)" />
+                                @click.stop="openAddOrEdit(null, data._id, INTEGRATION_TYPES.FOLDER.value)" />
                         </span>
-                        <el-button :icon="Edit" circle size="small" @click="openAddOrEdit(data, data.folderId)" />
-                        <el-button :icon="Right" color="#c0ebd7" circle size="small" @click="doMove" />
+                        <el-button :icon="Edit" circle size="small" @click.stop="openAddOrEdit(data, data.folderId)" />
+                        <el-button :icon="Right" color="#c0ebd7" circle size="small" @click.stop="doMove(data)" />
                         <el-button v-if="!data.children || data.children.length === 0" type="danger" :icon="Delete" circle
-                            size="small" @click="doRemove(data._id)" />
+                            size="small" @click.stop="doRemove(data._id)" />
                     </div>
                 </div>
             </template>
@@ -85,22 +86,44 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
+
+        <!-- move -->
+        <el-dialog v-model="moveDialogVisible" title="移动" width="750px">
+            <el-tree :data="moveTreeData" node-key="_id" :accordion="true" :props="{ class: getMoveNodeClass }"
+                :expand-on-click-node="false" style="user-select: none;" @node-click="submitMove">
+                <template #default="{ data }">
+                    <div>
+                        <el-icon size="16" color="#ffa400" style="vertical-align: middle;margin-right: 16px;">
+                            <Folder />
+                        </el-icon>
+                        <span>{{ data.name }}</span>
+                    </div>
+                </template>
+            </el-tree>
+        </el-dialog>
+
     </el-card>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useAppConfigStore } from "@/stores/app-config";
 import { FieldDef, copyProperties } from "../util/object-utils";
 import { INTEGRATION_TYPES, INTEGRATION_TYPE_DICT } from "../constant/dict.constants";
 import { create, update, remove, getTree, install } from "../api/integration";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElNotification } from "element-plus";
 import { javascript, javascriptLanguage } from '@codemirror/lang-javascript'
 import { Delete, Edit, Paperclip, Folder, Right } from '@element-plus/icons-vue'
+
+const expandSet = ref(new Set());
+const defaultExpand = computed(() => {
+    return Array.from(expandSet.value);
+});
 
 const scriptExtensions = [javascript(), javascriptLanguage];
 const appConfigStore = useAppConfigStore();
 
 const installLoading = ref(false);
+
 const folderRules = {
     name: [{ required: true, message: '文件夹名称不能为空' }],
 }
@@ -112,6 +135,14 @@ const menuRules = {
 const formRules = ref(menuRules);
 
 const treeData = ref([]);
+const moveTreeData = computed(() => {
+    return [{
+        name: "/",
+        type: "folder",
+        _id: "0",
+        children: treeData.value
+    }]
+})
 
 const formFieldDef = new FieldDef({
     _id: null,
@@ -128,11 +159,11 @@ const formFieldDef = new FieldDef({
 const formRef = ref();
 const form = ref(formFieldDef.getObj());
 
-
 const formDialogVisible = ref(false);
+const moveDialogVisible = ref(false);
 
-function fetchData() {
-    getTree().then(res => {
+async function fetchData() {
+    return getTree().then(res => {
         treeData.value = res.data;
     })
 }
@@ -157,26 +188,22 @@ function submitSaveOrUpdate() {
             return;
         }
         if (form.value._id) {
-            update(form.value._id, form.value).then(() => {
-                fetchData();
+            update(form.value._id, form.value).then(() => fetchData()).then(() => {
                 formDialogVisible.value = false;
                 appConfigStore.renderMenu();
             });
             return
         }
-        create(form.value).then(() => {
-            fetchData();
+        create(form.value).then(() => fetchData()).then(() => {
             formDialogVisible.value = false;
             appConfigStore.renderMenu();
         });
-
     });
 }
 
 function doInstall(id) {
     installLoading.value = true;
-    install(id).then(res => {
-        fetchData();
+    install(id).then(res => fetchData()).then(() => {
         appConfigStore.renderMenu();
         ElNotification.success({
             message: '安装成功'
@@ -188,13 +215,14 @@ function doInstall(id) {
 
 function doRemove(id) {
     remove(id).then(res => {
-        fetchData();
-        appConfigStore.renderMenu();
-    })
+        expandSet.value.delete(id);
+        return fetchData();
+    }).then(() => appConfigStore.renderMenu())
 }
 
-function doMove() {
-    ElMessage.warning('功能待开发中...');
+function doMove(data) {
+    form.value = copyProperties(data, formFieldDef.getObj());
+    moveDialogVisible.value = true;
 }
 
 function isFolder(value) {
@@ -206,6 +234,26 @@ function needInstall(value) {
     return lt && lt.needInstall;
 }
 
+function nodeExpand(data) {
+    expandSet.value.add(data._id);
+}
+
+function nodeCollapse(data) {
+    expandSet.value.delete(data._id);
+}
+
+function getMoveNodeClass(data) {
+    return (isFolder(data.type) && data._id !== form.value._id) ? '' : 'display-none';
+}
+
+function submitMove(data) {
+    form.value.folderId = data._id;
+    expandSet.value.add(form.value._id);
+    update(form.value._id, form.value).then(() => fetchData()).then(() => {
+        moveDialogVisible.value = false;
+        appConfigStore.renderMenu();
+    });
+}
 onMounted(() => {
     fetchData();
 });
