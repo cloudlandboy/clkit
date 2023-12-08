@@ -50,7 +50,7 @@ function checkAppUpdate() {
       title: '更新提示',
       duration: 0,
       showClose: false,
-      customClass: 'clboy-kit-update-notification',
+      customClass: 'clkit-update-notification',
       message: h('div', null, [
         h('div', { style: 'margin-bottom:8px' }, [
           h('p', null, res.data.serverUpdatable ? '有新版本发布' : '前端有新版本发布'),
@@ -118,7 +118,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="clboy-kit-container" v-loading.fullscreen.lock="updateLoading" element-loading-text="更新中...">
+  <div class="clkit-container" v-loading.fullscreen.lock="updateLoading" element-loading-text="更新中...">
     <el-row>
       <el-col :span="menuColSpan">
         <div class="kit-title" @click="menuSelect('/')">
@@ -158,15 +158,15 @@ onMounted(() => {
   user-select: none;
 }
 
-.clboy-kit-container {
+.clkit-container {
   width: 100%;
 }
 
-.clboy-kit-container .route-content {
+.clkit-container .route-content {
   padding: 64px 1rem;
 }
 
-.clboy-kit-update-notification {
+.clkit-update-notification {
   width: 180px
 }
 </style>

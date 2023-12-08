@@ -3,10 +3,10 @@
         <ul>
             <li>当前版本: <el-tag type="success" style="margin-left: 1rem;">{{ version }}</el-tag></li>
             <li>博客地址：<a href="https://www.clboy.cn/" target="_blank">https://www.clboy.cn</a></li>
-            <li>前端源码：<a href="https://github.com/cloudlandboy/clboy-kit"
-                    target="_blank">https://github.com/cloudlandboy/clboy-kit</a></li>
-            <li>服务端源码：<a href="https://github.com/cloudlandboy/clboy-kit-server"
-                    target="_blank">https://github.com/cloudlandboy/clboy-kit-server</a></li>
+            <li>前端源码：<a href="https://github.com/cloudlandboy/clkit"
+                    target="_blank">https://github.com/cloudlandboy/clkit</a></li>
+            <li>服务端源码：<a href="https://github.com/cloudlandboy/clkit-server"
+                    target="_blank">https://github.com/cloudlandboy/clkit-server</a></li>
         </ul>
     </div>
 </template>

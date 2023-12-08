@@ -25,7 +25,7 @@ function serverIntegrationUrl(id, index) {
 export const useAppConfigStore = defineStore('appConfig', () => {
     const idGen = new AutoIncrementKey();
     const config = {
-        title: 'CLBOY工具箱',
+        title: 'CLKIT',
         iconSrc: '/author-avatar.png',
         contextPath: '',
         defaultPath: '/',
@@ -83,7 +83,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
 
     function collectIntegrationMenu(treeNode, menuBucket, routerBucket) {
         const path = `/integration/${treeNode._id}`;
-        const menu = { path, title: treeNode.name };
+        const menu = { path, title: treeNode.name, hide: !!treeNode.hide };
         menuBucket.push(menu);
         if (INTEGRATION_TYPES.FOLDER.ve(treeNode.type)) {
             menu.children = [];

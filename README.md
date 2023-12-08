@@ -1,14 +1,10 @@
-# clboy-kit
+# clkit
 
-This template should help get you started developing with Vue 3 in Vite.
+`clkit-server` 的前端代码
 
-## Recommended IDE Setup
+使用方法见：[clkit-server](https://github.com/cloudlandboy/clkit-server)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 

@@ -18,25 +18,27 @@
         <el-tree :data="treeData" node-key="_id" :default-expanded-keys="defaultExpand" :accordion="true"
             @node-expand="nodeExpand" @node-collapse="nodeCollapse">
             <template #default="{ data }">
-                <div style="display: flex;width: 100%;justify-content: space-between;">
+                <div class="directory-tree-node">
                     <div>
-                        <el-icon v-if="isFolder(data.type)" size="16" color="#ffa400"
-                            style="vertical-align: middle;margin-right: 16px;">
+                        <el-icon v-if="isFolder(data.type)" size="16" color="#ffa400" class="directory-tree-icon">
                             <Folder />
                         </el-icon>
                         <el-icon v-else size="16" :color="data.installed ? '#85ce61' : '#909399'"
-                            style="vertical-align: middle;margin-right: 16px;">
+                            class="directory-tree-icon">
                             <Paperclip />
                         </el-icon>
                         <span>{{ data.name }}</span>
                     </div>
                     <div>
-                        <span v-if="needInstall(data.type)" style="margin-right: 12px;">
+                        <el-button v-if="data.hide" :icon="View" circle color="#fdf6ec" size="small"
+                            @click.stop="updateHide(data, false)" />
+                        <el-button v-else :icon="Hide" circle color="#73767a" size="small" @click.stop="updateHide(data, true)" />
+                        <span v-if="needInstall(data.type)" style="margin: 0 12px;">
                             <el-button v-if="data.installed" size="small" type="success"
                                 @click.stop="doInstall(data._id)">重装</el-button>
                             <el-button v-else size="small" type="info" @click.stop="doInstall(data._id)">安装</el-button>
                         </span>
-                        <span v-if="isFolder(data.type)" style="margin-right: 12px;">
+                        <span v-if="isFolder(data.type)" style="margin: 0 12px;">
                             <el-button :icon="Paperclip" color="#85ce61" circle size="small"
                                 @click.stop="openAddOrEdit(null, data._id)" />
                             <el-button :icon="Folder" color="#ffa400" circle size="small"
@@ -112,7 +114,7 @@ import { INTEGRATION_TYPES, INTEGRATION_TYPE_DICT } from "../constant/dict.const
 import { create, update, remove, getTree, install } from "../api/integration";
 import { ElNotification } from "element-plus";
 import { javascript, javascriptLanguage } from '@codemirror/lang-javascript'
-import { Delete, Edit, Paperclip, Folder, Right } from '@element-plus/icons-vue'
+import { Delete, Edit, Paperclip, Folder, Right, Hide, View } from '@element-plus/icons-vue'
 
 const expandSet = ref(new Set());
 const defaultExpand = computed(() => {
@@ -154,6 +156,7 @@ const formFieldDef = new FieldDef({
     sortValue: 0,
     insertScript: '',
     installed: false,
+    hide: false
 });
 
 const formRef = ref();
@@ -225,6 +228,16 @@ function doMove(data) {
     moveDialogVisible.value = true;
 }
 
+function updateHide(data, hide) {
+    form.value = copyProperties(data, formFieldDef.getObj());
+    if (form.value.hide !== hide) {
+        form.value.hide = hide;
+        update(form.value._id, form.value).then(() => fetchData()).then(() => {
+            appConfigStore.renderMenu();
+        });
+    }
+}
+
 function isFolder(value) {
     return INTEGRATION_TYPES.FOLDER.ve(value);
 }
@@ -254,6 +267,7 @@ function submitMove(data) {
         appConfigStore.renderMenu();
     });
 }
+
 onMounted(() => {
     fetchData();
 });
@@ -264,5 +278,16 @@ onMounted(() => {
 <style>
 .hiden-cm-lineNumbers .cm-gutters {
     display: none !important;
+}
+
+.directory-tree-node {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.directory-tree-icon {
+    vertical-align: middle;
+    margin-right: 16px;
 }
 </style>

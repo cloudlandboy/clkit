@@ -1,5 +1,5 @@
 <template>
-    <label v-for="menu in menuList" :key="menu._id">
+    <label v-for="menu in menuList" :key="menu._id" v-show="!menu.hide">
         <el-sub-menu v-if="menu.children" :index="menu.path">
             <template #title>
                 <el-icon size="small" v-show="menuCollapse">
