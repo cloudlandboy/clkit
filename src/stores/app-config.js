@@ -29,6 +29,7 @@ export const useAppConfigStore = defineStore('appConfig', () => {
         iconSrc: '/author-avatar.png',
         contextPath: '',
         defaultPath: '/',
+        maxIframeCache: 8,
         staticMenus: [
             {
                 path: idGen.getStringKey(), title: '代码生成', children: [

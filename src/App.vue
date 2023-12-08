@@ -6,12 +6,40 @@ import { checkUpdate, update as updateApp } from "./api/app";
 import { ElNotification, ElButton } from 'element-plus'
 import TreeMenu from "./components/tree-menu.vue";
 
+const containerLayoutDef = {
+  normal: {
+    menu: {
+      xs: 6,
+      sm: 4,
+      lg: 2,
+    },
+    view: {
+      xs: 18,
+      sm: 20,
+      lg: 22,
+    }
+  },
+  min: {
+    menu: {
+      xs: 2,
+      sm: 1,
+      lg: 1,
+    },
+    view: {
+      xs: 22,
+      sm: 23,
+      lg: 23,
+    }
+  }
+}
+
+const containerLayout = ref(containerLayoutDef.normal);
+
 const menuCollapse = ref(false);
-const menuColSpan = ref(3);
-const viewColSpan = ref(21);
 const appConfigStore = useAppConfigStore();
 const menuRef = ref();
-const iframeRef = ref();
+
+const iframeCache = ref([]);
 
 const defaultOpeneds = [appConfigStore.menuList[0].path];
 const currentRouter = shallowRef({ path: '' });
@@ -20,9 +48,35 @@ const updateLoading = ref(false);
 function menuSelect(path) {
   window.history.replaceState(null, "", appConfigStore.config.contextPath + path);
   currentRouter.value = findRoute(path);
-  if (!currentRouter.value.isComponent) {
-    toggleMenuCollapse(true);
+  if (currentRouter.value.isComponent) {
+    return
   }
+
+  let toView = iframeCache.value.find(frame => frame.router.path === currentRouter.value.path);
+  if (toView) {
+    toView.viewCount++;
+    return;
+  }
+
+  if (iframeCache.value.length < appConfigStore.config.maxIframeCache) {
+    toView = { index: iframeCache.value.length, router: currentRouter.value, ref: null, viewCount: 0 };
+    iframeCache.value.push(toView);
+    return
+  }
+
+  //最少使用
+  toView = iframeCache.value[0];
+  let maxViewCount = 0;
+  iframeCache.value.forEach(frame => {
+    if (frame.viewCount < toView.viewCount) {
+      toView = frame;
+    }
+    if (frame.viewCount > maxViewCount) {
+      maxViewCount = frame.viewCount;
+    }
+  })
+  toView.viewCount = maxViewCount + 1;
+  toView.router = currentRouter.value;
 }
 
 function findRoute(path) {
@@ -32,11 +86,9 @@ function findRoute(path) {
 function toggleMenuCollapse(collapse) {
   menuCollapse.value = collapse;
   if (collapse) {
-    menuColSpan.value = 1;
-    viewColSpan.value = 23;
+    containerLayout.value = containerLayoutDef.min;
   } else {
-    menuColSpan.value = 3;
-    viewColSpan.value = 21;
+    containerLayout.value = containerLayoutDef.normal;
   }
 }
 
@@ -84,16 +136,15 @@ function checkAppUpdate() {
   })
 }
 
-function iframeLoaded() {
+function iframeLoaded(frame) {
   try {
-    const iframeDocument = iframeRef.value.contentWindow.document;
+    const iframeDocument = frame.ref.contentWindow.document;
     const scriptElement = iframeDocument.createElement('script');
-    scriptElement.text = currentRouter.value.insertScript;
+    scriptElement.text = route.insertScript;
     scriptElement.id = "clkit-insert-script";
     iframeDocument.body.appendChild(scriptElement);
   } catch (err) {
     //ignore
-    console.error(err);
   }
 }
 
@@ -120,15 +171,14 @@ onMounted(() => {
 <template>
   <div class="clkit-container" v-loading.fullscreen.lock="updateLoading" element-loading-text="更新中...">
     <el-row>
-      <el-col :span="menuColSpan">
+      <el-col :xs="containerLayout.menu.xs" :sm="containerLayout.menu.sm" :lg="containerLayout.menu.lg">
         <div class="kit-title" @click="menuSelect('/')">
           <el-avatar :src="appConfigStore.config.iconSrc" v-if="appConfigStore.config.iconSrc"
             style="vertical-align:middle;" />
           <a v-show="!menuCollapse" href="javascript:void(0);">{{ appConfigStore.config.title }}</a>
         </div>
-        <div style="position: relative;height: 24px;">
-          <el-icon v-show="menuCollapse" style="cursor: pointer;position:absolute;right: 38px;"
-            @click="toggleMenuCollapse(false)">
+        <div style="position: relative;height: 24px;text-align: center;">
+          <el-icon v-show="menuCollapse" style="cursor: pointer" @click="toggleMenuCollapse(false)">
             <Menu />
           </el-icon>
           <el-icon v-show="!menuCollapse" style="cursor: pointer;position:absolute;right: 5px;"
@@ -141,11 +191,16 @@ onMounted(() => {
           <tree-menu :menuList="appConfigStore.menuList" :menuCollapse="menuCollapse" />
         </el-menu>
       </el-col>
-      <el-col :span="viewColSpan">
+      <el-col :xs="containerLayout.view.xs" :sm="containerLayout.view.sm" :lg="containerLayout.view.lg">
         <div class="route-content">
-          <component v-if="currentRouter.isComponent" :is="currentRouter.view" />
-          <iframe v-else :src="currentRouter.view" frameborder="0" allowfullscreen="true" @load="iframeLoaded"
-            ref="iframeRef" style="width: 100%;height: 800px;"></iframe>
+          <div>
+            <component v-if="currentRouter.isComponent" :is="currentRouter.view" />
+          </div>
+          <div v-for="frame in iframeCache" :key="frame.index">
+            <iframe v-show="currentRouter.path === frame.router.path" :src="frame.router.view" frameborder="0"
+              allowfullscreen="true" @load="iframeLoaded(frame)" :ref="frame.ref"
+              style="width: 100%;height: 800px;"></iframe>
+          </div>
         </div>
       </el-col>
     </el-row>
