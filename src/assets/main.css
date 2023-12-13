@@ -35,20 +35,6 @@ code {
   padding: 3.2px 6.4px;
 }
 
-.kit-title {
-  padding: var(--el-menu-base-level-padding);
-  margin-right: 16px;
-}
-
-.kit-title a:last-child {
-  margin-left: 6px;
-  font-family: cursive;
-  font-size: 1rem;
-  font-weight: bold;
-  text-decoration: none;
-  color: #dc392d;
-}
-
 .el-card.box-card {
   width: 100%;
 }

@@ -6,6 +6,14 @@ import { checkUpdate, update as updateApp } from "./api/app";
 import { ElNotification, ElButton } from 'element-plus'
 import TreeMenu from "./components/tree-menu.vue";
 
+const containerState = ref({
+  width: window.innerWidth,
+  height: window.innerHeight,
+  menuBarX: 0,
+  menuBarY: 0,
+  menuBarMoveing: false
+});
+
 const containerLayoutDef = {
   normal: {
     menu: {
@@ -21,14 +29,14 @@ const containerLayoutDef = {
   },
   min: {
     menu: {
-      xs: 2,
-      sm: 1,
-      lg: 1,
+      xs: 0,
+      sm: 0,
+      lg: 0,
     },
     view: {
-      xs: 22,
-      sm: 23,
-      lg: 23,
+      xs: 24,
+      sm: 24,
+      lg: 24,
     }
   }
 }
@@ -84,6 +92,9 @@ function findRoute(path) {
 }
 
 function toggleMenuCollapse(collapse) {
+  if (containerState.value.menuBarMoveing) {
+    return;
+  }
   menuCollapse.value = collapse;
   if (collapse) {
     containerLayout.value = containerLayoutDef.min;
@@ -148,6 +159,24 @@ function iframeLoaded(frame) {
   }
 }
 
+function menuBarDragging(pos) {
+  if (containerState.value.menuBarMoveing) {
+    return;
+  }
+  const xMove = Math.abs(pos.left - containerState.value.menuBarX);
+  const yMove = Math.abs(pos.top - containerState.value.menuBarY);
+  containerState.value.menuBarMoveing = (xMove > 1 || yMove > 1);
+  containerState.value.menuBarX = pos.left;
+  containerState.value.menuBarY = pos.top;
+}
+
+function openInNewTab() {
+  if (currentRouter.value.isComponent) {
+    return
+  }
+  window.open(currentRouter.value.view, '_blank');
+}
+
 onBeforeMount(() => {
   appConfigStore.renderMenu().finally(() => {
     const path = location.pathname.substring(appConfigStore.config.contextPath.length - 1);
@@ -164,27 +193,37 @@ onMounted(() => {
     }
   });
 
+  window.addEventListener("resize", () => {
+    containerState.value.width = window.innerWidth;
+    containerState.value.height = window.innerHeight
+  });
+
 
 });
 </script>
 
 <template>
+  <vue-drag-resize class="clkit-menubar" :w="58" :h="22" :isActive="false" :z="20" :isResizable="false"
+    :parentLimitation="true" @dragstop="containerState.menuBarMoveing = false" @dragging="menuBarDragging">
+    <el-icon class="clkit-menubar-btn" v-show="menuCollapse" color="red" @mouseup="toggleMenuCollapse(false)"
+      size="large">
+      <Menu />
+    </el-icon>
+    <el-icon class="clkit-menubar-btn" v-show="!menuCollapse" color="red" @mouseup="toggleMenuCollapse(true)"
+      size="large">
+      <Fold />
+    </el-icon>
+    <el-icon class="clkit-menubar-btn" color="blue" size="large" @click="openInNewTab">
+      <TopRight />
+    </el-icon>
+  </vue-drag-resize>
   <div class="clkit-container" v-loading.fullscreen.lock="updateLoading" element-loading-text="更新中...">
     <el-row>
       <el-col :xs="containerLayout.menu.xs" :sm="containerLayout.menu.sm" :lg="containerLayout.menu.lg">
-        <div class="kit-title" @click="menuSelect('/')">
+        <div class="clkit-title" @click="menuSelect('/')">
           <el-avatar :src="appConfigStore.config.iconSrc" v-if="appConfigStore.config.iconSrc"
             style="vertical-align:middle;" />
           <a v-show="!menuCollapse" href="javascript:void(0);">{{ appConfigStore.config.title }}</a>
-        </div>
-        <div style="position: relative;height: 24px;text-align: center;">
-          <el-icon v-show="menuCollapse" style="cursor: pointer" @click="toggleMenuCollapse(false)">
-            <Menu />
-          </el-icon>
-          <el-icon v-show="!menuCollapse" style="cursor: pointer;position:absolute;right: 5px;"
-            @click="toggleMenuCollapse(true)" size="large">
-            <Fold />
-          </el-icon>
         </div>
         <el-menu ref="menuRef" :default-active="currentRouter.path" @select="menuSelect" :default-openeds="defaultOpeneds"
           :collapse="menuCollapse" :collapse-transition="false">
@@ -199,7 +238,7 @@ onMounted(() => {
           <div v-for="frame in iframeCache" :key="frame.index">
             <iframe v-show="currentRouter.path === frame.router.path" :src="frame.router.view" frameborder="0"
               allowfullscreen="true" @load="iframeLoaded(frame)" :ref="frame.ref"
-              style="width: 100%;height: 800px;"></iframe>
+              :style="{ width: '99%', height: containerState.height + 'px' }"></iframe>
           </div>
         </div>
       </el-col>
@@ -208,20 +247,45 @@ onMounted(() => {
 </template>
 
 <style>
+.clkit-title {
+  margin-top: 12px;
+  padding: var(--el-menu-base-level-padding);
+  margin-right: 16px;
+}
+
+.clkit-title a:last-child {
+  margin-left: 6px;
+  font-family: cursive;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: #dc392d;
+}
+
 .el-menu,
-.kit-title {
+.clkit-title {
   user-select: none;
 }
+
 
 .clkit-container {
   width: 100%;
 }
 
-.clkit-container .route-content {
-  padding: 64px 1rem;
-}
-
 .clkit-update-notification {
   width: 180px
+}
+
+.clkit-menubar {
+  opacity: 0.2;
+}
+
+.clkit-menubar:hover {
+  opacity: 1;
+}
+
+.clkit-menubar-btn {
+  cursor: pointer;
+  margin-right: 8px;
 }
 </style>

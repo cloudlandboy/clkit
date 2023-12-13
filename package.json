@@ -1,6 +1,6 @@
 {
   "name": "clkit",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -27,7 +27,8 @@
     "lodash": "^4.17.21",
     "pinia": "^2.1.7",
     "vue": "^3.3.4",
-    "vue-codemirror": "^6.1.1"
+    "vue-codemirror": "^6.1.1",
+    "vue-drag-resize": "^1.5.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.4",
