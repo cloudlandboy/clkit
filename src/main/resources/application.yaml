@@ -1,0 +1,32 @@
+server:
+  port: 28288
+spring:
+  datasource:
+    username: clkit
+    password: clkit
+    url: jdbc:h2:~/.clkit/db
+    driver-class-name: org.h2.Driver
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+knife4j:
+  enable: true
+springdoc:
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: cn.clboy.clkit
+clkit:
+  open-on-startup: true
+logging:
+  level:
+    root: info
