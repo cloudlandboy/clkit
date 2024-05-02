@@ -1,4 +1,4 @@
-package cn.clboy.clkit.util;
+package cn.clboy.clkit.common.util;
 
 import org.springframework.boot.system.ApplicationHome;
 

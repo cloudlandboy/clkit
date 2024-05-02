@@ -1,18 +1,19 @@
 package cn.clboy.clkit.common.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * 全局异常控制器
@@ -21,12 +22,14 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2024/04/24 10:57:33
  */
 @Slf4j
-//@RestController
+@RestController
 @RestControllerAdvice
 public class GlobalExceptionController extends AbstractErrorController {
+    private final ObjectMapper objectMapper;
 
-    public GlobalExceptionController(ErrorAttributes errorAttributes) {
+    public GlobalExceptionController(ObjectMapper objectMapper, ErrorAttributes errorAttributes) {
         super(errorAttributes);
+        this.objectMapper = objectMapper;
     }
 
 
@@ -37,8 +40,18 @@ public class GlobalExceptionController extends AbstractErrorController {
      * @param response 响应
      */
     @RequestMapping("${server.error.path:${error.path:/error}}")
-    public ApiResult<Void> handlerError(HttpServletRequest request, HttpServletResponse response) {
-        return ApiResult.of(super.getStatus(request));
+    public void handlerError(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpStatus status = super.getStatus(request);
+        Map<String, Object> errorAttributes = super.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+        String requestPath = (String) errorAttributes.get("path");
+        if (status == HttpStatus.NOT_FOUND && !requestPath.startsWith("/api")) {
+            response.setStatus(HttpStatus.OK.value());
+            response.setContentType(MediaType.TEXT_HTML_VALUE);
+            request.getRequestDispatcher("/index.html").forward(request, response);
+            return;
+        }
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getOutputStream().write(objectMapper.writeValueAsBytes(ApiResult.of(status)));
     }
 
     /**

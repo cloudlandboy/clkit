@@ -1,6 +1,6 @@
 package cn.clboy.clkit.os.handler;
 
-import cn.clboy.clkit.component.condition.ConditionalOnOs;
+import cn.clboy.clkit.common.component.condition.ConditionalOnOs;
 import cn.clboy.clkit.os.vo.PidInfoVO;
 import cn.hutool.core.io.IoUtil;
 import lombok.SneakyThrows;

@@ -2,11 +2,9 @@ package cn.clboy.clkit.app.controller;
 
 import cn.clboy.clkit.app.dto.ExportDataDTO;
 import cn.clboy.clkit.app.service.AppService;
+import cn.clboy.clkit.common.web.ApiResult;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -45,5 +43,13 @@ public class AppController {
     @PostMapping("/import")
     public void importData(MultipartFile file) {
         appService.importData(file);
+    }
+
+    /**
+     * 获取版本
+     */
+    @GetMapping("version")
+    public ApiResult<String> getVersion() {
+        return ApiResult.ok(appService.getVersion());
     }
 }

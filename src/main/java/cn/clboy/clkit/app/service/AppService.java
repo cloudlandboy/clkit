@@ -28,4 +28,10 @@ public interface AppService {
      * @param file 文件
      */
     void importData(MultipartFile file);
+
+    /**
+     * 获取版本
+     */
+    String getVersion();
+
 }

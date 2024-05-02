@@ -3,6 +3,7 @@ package cn.clboy.clkit.app.service.impl;
 import cn.clboy.clkit.app.dto.ExportDataDTO;
 import cn.clboy.clkit.app.handler.AppDataHandler;
 import cn.clboy.clkit.app.service.AppService;
+import cn.clboy.clkit.config.AppProperties;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.net.URLEncodeUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +38,7 @@ import java.util.Map;
 public class AppServiceImpl implements AppService {
 
     private final ObjectMapper objectMapper;
+    private final AppProperties appProperties;
     private final TransactionTemplate transactionTemplate;
 
     @Override
@@ -100,5 +102,10 @@ public class AppServiceImpl implements AppService {
         transactionTemplate.executeWithoutResult(ac -> {
             handlerDataListMap.forEach(AppDataHandler::importData);
         });
+    }
+
+    @Override
+    public String getVersion() {
+        return appProperties.getVersion();
     }
 }

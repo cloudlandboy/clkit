@@ -1,6 +1,6 @@
 package cn.clboy.clkit.gen.jpa;
 
-import cn.clboy.clkit.component.jpa.ListJsonAttributeConverter;
+import cn.clboy.clkit.common.component.jpa.ListJsonAttributeConverter;
 import cn.clboy.clkit.gen.entity.CrudTemplate;
 
 /**

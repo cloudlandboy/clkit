@@ -27,6 +27,7 @@ springdoc:
       packages-to-scan: cn.clboy.clkit
 clkit:
   open-on-startup: true
+  version: @project.version@
 logging:
   level:
     root: info

@@ -1,6 +1,7 @@
 package cn.clboy.clkit.gen.service;
 
 import cn.clboy.clkit.gen.dto.GenCrudDTO;
+import cn.clboy.clkit.gen.dto.GenJavaClassDTO;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,4 +20,12 @@ public interface GenService {
      * @param response 响应
      */
     void genCrud(GenCrudDTO dto, HttpServletResponse response);
+
+    /**
+     * gen Java类
+     *
+     * @param dto      DTO
+     * @param response 响应
+     */
+    void genJavaClass(GenJavaClassDTO dto, HttpServletResponse response);
 }

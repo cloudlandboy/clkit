@@ -2,7 +2,7 @@ package cn.clboy.clkit.config;
 
 import cn.clboy.clkit.ClkitApplication;
 import cn.clboy.clkit.common.web.GlobalExceptionController;
-import cn.clboy.clkit.util.AppUtils;
+import cn.clboy.clkit.common.util.AppUtils;
 import cn.hutool.core.io.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.File;
@@ -48,11 +47,6 @@ public class AppConfig implements InitializingBean, WebMvcConfigurer {
         cfg.setMaxAge(Duration.ofDays(1));
         cfgSource.registerCorsConfiguration("/**", cfg);
         return new CorsFilter(cfgSource);
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        //clkit-ui dist
     }
 
     @Override

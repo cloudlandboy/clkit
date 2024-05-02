@@ -2,7 +2,7 @@ package cn.clboy.clkit;
 
 import cn.clboy.clkit.config.AppProperties;
 import cn.clboy.clkit.os.handler.OsHandler;
-import cn.clboy.clkit.util.AppUtils;
+import cn.clboy.clkit.common.util.AppUtils;
 import cn.hutool.core.net.NetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;

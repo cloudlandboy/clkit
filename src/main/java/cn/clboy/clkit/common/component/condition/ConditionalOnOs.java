@@ -1,4 +1,4 @@
-package cn.clboy.clkit.component.condition;
+package cn.clboy.clkit.common.component.condition;
 
 import org.springframework.context.annotation.Conditional;
 

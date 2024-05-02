@@ -1,6 +1,13 @@
 package cn.clboy.clkit.gen.service.impl;
 
+import cn.clboy.clkit.common.util.HttpUtils;
+import cn.clboy.clkit.common.web.ApiResult;
+import cn.clboy.clkit.gen.component.CrudFilenameFactory;
+import cn.clboy.clkit.gen.component.JsonGenJavaClassConfig;
+import cn.clboy.clkit.gen.component.LombokAnnotator;
+import cn.clboy.clkit.gen.component.StringMapCodeWriter;
 import cn.clboy.clkit.gen.dto.GenCrudDTO;
+import cn.clboy.clkit.gen.dto.GenJavaClassDTO;
 import cn.clboy.clkit.gen.dto.LangTypeMatchDTO;
 import cn.clboy.clkit.gen.entity.CrudTemplate;
 import cn.clboy.clkit.gen.entity.Db;
@@ -15,16 +22,22 @@ import cn.clboy.clkit.gen.vo.TableBasicVO;
 import cn.clboy.clkit.gen.vo.TableInfoVO;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.net.URLEncodeUtil;
 import cn.hutool.core.text.NamingCase;
 import cn.hutool.core.util.ZipUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.writer.ZipCodeWriter;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
+import org.jsonschema2pojo.GenerationConfig;
+import org.jsonschema2pojo.SchemaGenerator;
+import org.jsonschema2pojo.SchemaMapper;
+import org.jsonschema2pojo.SchemaStore;
+import org.jsonschema2pojo.rules.RuleFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -55,9 +68,10 @@ public class GenServiceImpl implements GenService {
     private final DbLangTypeService dbLangTypeService;
     private final CrudTemplateService crudTemplateService;
 
-    private static final String GLOBAL_FILENAME_TP_KEY = "__GLOBAL_FILENAME__";
-    private static final String MODULE_FILENAME_TP_KEY = "__%s_FILENAME__";
+    private final ObjectMapper objectMapper;
     private static final String MODULE_TP_KEY = "__%s__";
+    private static final String MODULE_FILENAME_TP_KEY = "__%s_FILENAME__";
+    private static final String GLOBAL_FILENAME_TP_KEY = "__GLOBAL_FILENAME__";
 
     @Override
     @SneakyThrows
@@ -77,10 +91,10 @@ public class GenServiceImpl implements GenService {
         StringTemplateLoader templateLoader = new StringTemplateLoader();
         cfg.setTemplateLoader(templateLoader);
 
-        TemplateCrudFilenameFactory globalFilenameFactory = null;
+        CrudFilenameFactory.TemplateCrudFilenameFactory globalFilenameFactory = null;
         if (StringUtils.hasText(crudTemplate.getModuleFileNameFormat())) {
             templateLoader.putTemplate(GLOBAL_FILENAME_TP_KEY, crudTemplate.getModuleFileNameFormat());
-            globalFilenameFactory = new TemplateCrudFilenameFactory(cfg.getTemplate(GLOBAL_FILENAME_TP_KEY));
+            globalFilenameFactory = new CrudFilenameFactory.TemplateCrudFilenameFactory(cfg.getTemplate(GLOBAL_FILENAME_TP_KEY));
         }
 
         Map<String, CrudFilenameFactory> filenameFactoryMap = CollectionUtils.newHashMap(toUseModules.size());
@@ -90,11 +104,11 @@ public class GenServiceImpl implements GenService {
                 String tpk = String.format(MODULE_FILENAME_TP_KEY, module.getName());
                 templateLoader.putTemplate(tpk, module.getFileNameFormat());
                 Template template = cfg.getTemplate(tpk);
-                filenameFactoryMap.put(module.getName(), new TemplateCrudFilenameFactory(template));
+                filenameFactoryMap.put(module.getName(), new CrudFilenameFactory.TemplateCrudFilenameFactory(template));
             } else if (globalFilenameFactory != null) {
                 filenameFactoryMap.put(module.getName(), globalFilenameFactory);
             } else {
-                filenameFactoryMap.put(module.getName(), DefaultCrudFilenameFactory.INSTANCE);
+                filenameFactoryMap.put(module.getName(), CrudFilenameFactory.DefaultCrudFilenameFactory.INSTANCE);
             }
         }
 
@@ -135,14 +149,14 @@ public class GenServiceImpl implements GenService {
             }
         }
 
-        String fileName;
+        String filename;
         byte[] data;
         String contentType;
         if (fileCount == 1) {
             //直接返回文件不压缩
             contentType = MediaType.TEXT_PLAIN_VALUE;
             data = IoUtil.readBytes(iss[0]);
-            fileName = StringUtils.getFilename(paths[0]);
+            filename = StringUtils.getFilename(paths[0]);
         } else {
             contentType = "application/zip";
             String dirname = tableInfoList.get(0).getName();
@@ -155,13 +169,32 @@ public class GenServiceImpl implements GenService {
             ByteArrayOutputStream zipOs = new ByteArrayOutputStream((int) DataSize.ofKilobytes(100).toBytes());
             ZipUtil.zip(zipOs, paths, iss);
             data = zipOs.toByteArray();
-            fileName = dirname + ".zip";
+            filename = dirname + ".zip";
         }
-        response.setContentType(contentType);
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment;filename=" + URLEncodeUtil.encode(fileName));
-        response.getOutputStream().write(data);
+
+        HttpUtils.writeFile(response, data, contentType, filename);
+    }
+
+    @Override
+    @SneakyThrows
+    public void genJavaClass(GenJavaClassDTO dto, HttpServletResponse response) {
+        GenerationConfig config = new JsonGenJavaClassConfig(dto);
+        JCodeModel codeModel = new JCodeModel();
+        RuleFactory ruleFactory = new RuleFactory(config, new LombokAnnotator(dto), new SchemaStore());
+        SchemaMapper mapper = new SchemaMapper(ruleFactory, new SchemaGenerator());
+        mapper.generate(codeModel, dto.getClassName(), dto.getPackagePath(), dto.getSourceCode());
+
+        if (Boolean.TRUE.equals(dto.getForPreview())) {
+            StringMapCodeWriter writer = new StringMapCodeWriter();
+            codeModel.build(writer);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getOutputStream().write(objectMapper.writeValueAsBytes(ApiResult.ok(writer.getMap())));
+            return;
+        }
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
+        codeModel.build(new ZipCodeWriter(os));
+        HttpUtils.writeFile(response, os.toByteArray(), "application/zip", dto.getClassName() + ".zip");
     }
 
     /**
@@ -207,53 +240,4 @@ public class GenServiceImpl implements GenService {
         return entity;
     }
 
-
-    /**
-     * crud文件名工厂
-     *
-     * @author clboy
-     * @date 2024/04/28 10:54:35
-     */
-    public interface CrudFilenameFactory {
-        String getFilename(CrudDataModelVO model);
-
-    }
-
-    /**
-     * 默认crud文件名工厂
-     *
-     * @author clboy
-     * @date 2024/04/28 10:54:55
-     */
-    public static class DefaultCrudFilenameFactory implements CrudFilenameFactory {
-
-        public static final CrudFilenameFactory INSTANCE = new DefaultCrudFilenameFactory();
-
-        private DefaultCrudFilenameFactory() {
-        }
-
-        @Override
-        public String getFilename(CrudDataModelVO model) {
-            return String.format("%s/%s.%s", model.getModuleName(),
-                    model.getEntity().getPascalCaseName() + NamingCase.toPascalCase(model.getModuleName()),
-                    model.getLang().toLowerCase());
-        }
-    }
-
-    public static class TemplateCrudFilenameFactory implements CrudFilenameFactory {
-
-        private final Template template;
-
-        public TemplateCrudFilenameFactory(Template template) {
-            this.template = template;
-        }
-
-        @Override
-        @SneakyThrows
-        public String getFilename(CrudDataModelVO model) {
-            StringWriter stringWriter = new StringWriter();
-            template.process(model, stringWriter);
-            return stringWriter.toString();
-        }
-    }
 }

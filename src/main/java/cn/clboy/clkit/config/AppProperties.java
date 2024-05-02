@@ -16,6 +16,11 @@ public class AppProperties {
     public static final String DEFAULT_DATA_DIR_PATH = "~/.clkit";
 
     /**
+     * 版本
+     */
+    public String version;
+
+    /**
      * 数据目录路径
      */
     private String dataDirPath = DEFAULT_DATA_DIR_PATH;

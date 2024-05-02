@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.clboy</groupId>
     <artifactId>clkit</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <name>clkit</name>
     <description>软件开发工具箱</description>
     <packaging>jar</packaging>
@@ -17,6 +17,7 @@
         <hutool.version>5.8.26</hutool.version>
         <h2.version>2.2.224</h2.version>
         <knife4j.version>4.4.0</knife4j.version>
+        <jsonschema2pojo.version>1.2.1</jsonschema2pojo.version>
     </properties>
     <dependencies>
         <dependency>
@@ -49,6 +50,11 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
             <version>${knife4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsonschema2pojo</groupId>
+            <artifactId>jsonschema2pojo-core</artifactId>
+            <version>${jsonschema2pojo.version}</version>
         </dependency>
         <!-- spring 全家桶-->
         <dependency>
@@ -97,6 +103,12 @@
     </dependencyManagement>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

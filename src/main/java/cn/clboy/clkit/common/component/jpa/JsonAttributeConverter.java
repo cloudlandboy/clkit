@@ -1,4 +1,4 @@
-package cn.clboy.clkit.component.jpa;
+package cn.clboy.clkit.common.component.jpa;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
