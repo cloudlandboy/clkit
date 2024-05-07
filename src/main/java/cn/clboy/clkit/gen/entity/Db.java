@@ -1,7 +1,7 @@
 package cn.clboy.clkit.gen.entity;
 
-import cn.clboy.clkit.common.entity.BaseEntity;
 import cn.clboy.clkit.common.constants.enums.DbPlatformEnum;
+import cn.clboy.clkit.common.entity.BaseEntity;
 import cn.clboy.clkit.common.entity.IUniqueNameEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +9,6 @@ import org.hibernate.annotations.Comment;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -21,7 +20,6 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 @Entity
-@Table()
 @EqualsAndHashCode(callSuper = true)
 public class Db extends BaseEntity implements IUniqueNameEntity {
 

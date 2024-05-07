@@ -1,8 +1,8 @@
-package cn.clboy.clkit.os.service.impl;
+package cn.clboy.clkit.net.service.impl;
 
-import cn.clboy.clkit.os.query.ScanPortQuery;
-import cn.clboy.clkit.os.service.LanService;
-import cn.clboy.clkit.os.vo.IpPortListVO;
+import cn.clboy.clkit.net.query.ScanPortQuery;
+import cn.clboy.clkit.net.service.LanService;
+import cn.clboy.clkit.net.vo.IpPortListVO;
 import cn.hutool.core.net.Ipv4Util;
 import cn.hutool.core.net.NetUtil;
 import lombok.RequiredArgsConstructor;

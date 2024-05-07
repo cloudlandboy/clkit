@@ -1,7 +1,7 @@
-package cn.clboy.clkit.os.service;
+package cn.clboy.clkit.net.service;
 
-import cn.clboy.clkit.os.query.ScanPortQuery;
-import cn.clboy.clkit.os.vo.IpPortListVO;
+import cn.clboy.clkit.net.query.ScanPortQuery;
+import cn.clboy.clkit.net.vo.IpPortListVO;
 
 import java.util.List;
 

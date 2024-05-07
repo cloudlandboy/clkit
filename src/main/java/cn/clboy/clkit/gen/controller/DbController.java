@@ -45,7 +45,7 @@ public class DbController {
     }
 
     /**
-     * 更新
+     * 获取通过ID
      *
      * @param id ID
      */

@@ -1,9 +1,9 @@
-package cn.clboy.clkit.os.controller;
+package cn.clboy.clkit.net.controller;
 
 import cn.clboy.clkit.common.web.ApiResult;
-import cn.clboy.clkit.os.query.ScanPortQuery;
-import cn.clboy.clkit.os.service.LanService;
-import cn.clboy.clkit.os.vo.IpPortListVO;
+import cn.clboy.clkit.net.query.ScanPortQuery;
+import cn.clboy.clkit.net.service.LanService;
+import cn.clboy.clkit.net.vo.IpPortListVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +18,7 @@ import java.util.List;
  * @date 2024/04/22 10:12:39
  */
 @RestController
-@RequestMapping("os/lan")
+@RequestMapping("net/lan")
 @RequiredArgsConstructor
 public class LanController {
 

@@ -1,4 +1,4 @@
-package cn.clboy.clkit.os.query;
+package cn.clboy.clkit.net.query;
 
 
 import lombok.Data;

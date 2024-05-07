@@ -1,4 +1,4 @@
-package cn.clboy.clkit.os.vo;
+package cn.clboy.clkit.net.vo;
 
 import lombok.Data;
 

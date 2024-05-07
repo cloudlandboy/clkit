@@ -33,4 +33,5 @@ build/
 .vscode/
 
 ### ui file ###
+clkit_extensions/
 src/main/resources/public

@@ -77,7 +77,7 @@ public class WindowsOsHandler implements OsHandler {
     @Override
     @SneakyThrows
     public void openUrl(String url) {
-        ProcessBuilder ps = new ProcessBuilder("start", url);
+        ProcessBuilder ps = new ProcessBuilder("cmd", "/c", "start", url);
         ps.start();
     }
 

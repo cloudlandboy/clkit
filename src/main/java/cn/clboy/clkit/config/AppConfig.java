@@ -1,17 +1,17 @@
 package cn.clboy.clkit.config;
 
 import cn.clboy.clkit.ClkitApplication;
-import cn.clboy.clkit.common.web.GlobalExceptionController;
 import cn.clboy.clkit.common.util.AppUtils;
-import cn.hutool.core.io.FileUtil;
+import cn.clboy.clkit.common.web.GlobalExceptionController;
+import cn.clboy.clkit.extension.filter.ExtensionResourceFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
+import org.springframework.core.Ordered;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -19,7 +19,6 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.io.File;
 import java.time.Duration;
 
 /**
@@ -49,6 +48,15 @@ public class AppConfig implements InitializingBean, WebMvcConfigurer {
         return new CorsFilter(cfgSource);
     }
 
+    @Bean
+    public FilterRegistrationBean<ExtensionResourceFilter> extensionResourceFilterRegistrationBean() {
+        FilterRegistrationBean<ExtensionResourceFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new ExtensionResourceFilter());
+        bean.setName("extensionResourceFilter");
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
+
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         String appPackage = ClkitApplication.class.getPackage().getName();
@@ -65,11 +73,6 @@ public class AppConfig implements InitializingBean, WebMvcConfigurer {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (!StringUtils.hasText(appProperties.getDataDirPath())) {
-            appProperties.setDataDirPath(AppProperties.DEFAULT_DATA_DIR_PATH);
-        }
-        File appDirfile = new File(FileUtil.getAbsolutePath(appProperties.getDataDirPath()));
-        Assert.isTrue(appDirfile.exists() || appDirfile.mkdir(), "创建数据目录出错");
-        AppUtils.setDataDirPath(appDirfile.getAbsolutePath());
+        AppUtils.setAppProperties(appProperties);
     }
 }

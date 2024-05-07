@@ -26,7 +26,7 @@ springdoc:
       paths-to-match: '/**'
       packages-to-scan: cn.clboy.clkit
 clkit:
-  open-on-startup: true
+  open-on-startup: false
   version: @project.version@
 logging:
   level:
