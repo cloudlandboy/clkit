@@ -1,12 +1,15 @@
 package cn.clboy.clkit.extension.entity;
 
+import cn.clboy.clkit.common.constants.enums.ExtensionTypeEnum;
 import cn.clboy.clkit.common.entity.BaseEntity;
 import cn.clboy.clkit.common.entity.IUniqueNameEntity;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Comment;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -43,8 +46,10 @@ public class Extension extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("类型")
     @Column(nullable = false)
-    @NotBlank(message = "invalid type")
-    private String type;
+    @NotNull(message = "invalid type")
+    @JsonSerialize
+    @Convert(converter = ExtensionTypeEnum.JpaConverter.class)
+    private ExtensionTypeEnum type;
 
     /**
      * URL

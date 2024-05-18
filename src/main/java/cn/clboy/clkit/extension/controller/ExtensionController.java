@@ -1,13 +1,17 @@
 package cn.clboy.clkit.extension.controller;
 
+import cn.clboy.clkit.common.constants.enums.ExtensionTypeEnum;
 import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.extension.entity.Extension;
 import cn.clboy.clkit.extension.service.ExtensionService;
 import cn.clboy.clkit.extension.vo.ExtensionTypeVO;
 import cn.hutool.core.lang.tree.Tree;
+import cn.hutool.extra.spring.SpringUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +65,7 @@ public class ExtensionController {
      * 获取所有
      */
     @GetMapping
+    @SneakyThrows
     public ApiResult<List<Extension>> getAll() {
         return ApiResult.ok(extensionService.getAll());
     }

@@ -73,8 +73,18 @@ public class LinuxOsHandler extends AbstractOsHandler {
     @Override
     @SneakyThrows
     public void openUrl(String url) {
-        ProcessBuilder ps = new ProcessBuilder("open", url);
-        ps.start();
+        List<String> possibleCommands = Arrays.asList("xdg-open", "open");
+        Exception lastException = null;
+        for (String possibleCommand : possibleCommands) {
+            try {
+                ProcessBuilder ps = new ProcessBuilder(possibleCommand, url);
+                ps.start();
+                return;
+            } catch (Exception ex) {
+                lastException = ex;
+            }
+        }
+        throw lastException;
     }
 
 

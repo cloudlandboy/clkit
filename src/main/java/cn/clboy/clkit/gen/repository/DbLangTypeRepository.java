@@ -1,8 +1,9 @@
 package cn.clboy.clkit.gen.repository;
 
+import cn.clboy.clkit.common.component.jpa.BaseRepository;
 import cn.clboy.clkit.common.constants.enums.DbPlatformEnum;
 import cn.clboy.clkit.gen.entity.DbLangType;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,7 +13,8 @@ import java.util.List;
  * @author clboy
  * @date 2024/04/18 17:19:15
  */
-public interface DbLangTypeRepository extends JpaRepository<DbLangType, Long> {
+@Repository
+public interface DbLangTypeRepository extends BaseRepository<DbLangType, Long> {
 
     /**
      * 按数据平台和语言类型查找

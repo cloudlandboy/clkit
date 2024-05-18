@@ -19,6 +19,7 @@
         <knife4j.version>4.4.0</knife4j.version>
         <jsonschema2pojo.version>1.2.1</jsonschema2pojo.version>
         <okhttp.version>4.12.0</okhttp.version>
+        <javaparser.version>3.24.2</javaparser.version>
     </properties>
     <dependencies>
         <dependency>
@@ -28,6 +29,10 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-system</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-extra</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -62,6 +67,12 @@
             <artifactId>okhttp</artifactId>
             <version>${okhttp.version}</version>
         </dependency>
+        <!--解析源码用-->
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-symbol-solver-core</artifactId>
+            <version>${javaparser.version}</version>
+        </dependency>
         <!-- spring 全家桶-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -87,6 +98,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
     </dependencies>
     <dependencyManagement>

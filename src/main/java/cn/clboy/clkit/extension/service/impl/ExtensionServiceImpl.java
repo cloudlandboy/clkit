@@ -1,7 +1,6 @@
 package cn.clboy.clkit.extension.service.impl;
 
 import cn.clboy.clkit.common.constants.enums.ExtensionTypeEnum;
-import cn.clboy.clkit.common.constants.enums.IValueLabelEnum;
 import cn.clboy.clkit.common.service.CrudServiceImpl;
 import cn.clboy.clkit.common.util.AppUtils;
 import cn.clboy.clkit.extension.entity.Extension;
@@ -25,7 +24,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -51,6 +49,8 @@ public class ExtensionServiceImpl extends CrudServiceImpl<Extension, Long, Exten
 
     @Override
     public Extension updateById(Extension dto) {
+        Extension extension = getById(dto.getId());
+        dto.setPath(extension.getPath());
         this.validate(dto);
         return super.updateById(dto);
     }
@@ -73,12 +73,10 @@ public class ExtensionServiceImpl extends CrudServiceImpl<Extension, Long, Exten
             return Collections.emptyList();
         }
 
-        Map<String, ExtensionTypeEnum> tpeMap = IValueLabelEnum.toValueMap(ExtensionTypeEnum.class);
         List<Long> installedIds = AppUtils.listExistsExtensionIds();
-
         if (filterInstalled) {
             extensionList = extensionList.stream()
-                    .filter(et -> !(tpeMap.get(et.getType()).isNeedInstall()) || installedIds.contains(et.getId()))
+                    .filter(et -> !(et.getType().isNeedInstall()) || installedIds.contains(et.getId()))
                     .collect(Collectors.toList());
         }
 
@@ -94,7 +92,7 @@ public class ExtensionServiceImpl extends CrudServiceImpl<Extension, Long, Exten
             treeNode.putExtra("sortValue", extension.getSortValue());
             treeNode.putExtra("hide", extension.getHide());
             treeNode.putExtra("path", extension.getPath());
-            boolean needInstall = tpeMap.get(extension.getType()).isNeedInstall();
+            boolean needInstall = extension.getType().isNeedInstall();
             treeNode.putExtra("installed", !needInstall || installedIds.contains(extension.getId()));
         });
     }
@@ -135,13 +133,11 @@ public class ExtensionServiceImpl extends CrudServiceImpl<Extension, Long, Exten
      * @param dto DTO
      */
     private void validate(Extension dto) {
-        ExtensionTypeEnum typeEnum = IValueLabelEnum.getByValue(ExtensionTypeEnum.class, dto.getType());
-        Assert.notNull(typeEnum, "invalid type");
-        if (ExtensionTypeEnum.FOLDER == typeEnum) {
+        if (ExtensionTypeEnum.FOLDER == dto.getType()) {
             return;
         }
         Assert.hasText(dto.getUrl(), "invalid url");
-        ExtensionHandler handler = ExtensionHandler.HOLDER.getHandler(typeEnum.getValue());
+        ExtensionHandler handler = ExtensionHandler.HOLDER.getHandler(dto.getType());
         handler.validate(dto);
     }
 

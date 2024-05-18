@@ -44,6 +44,6 @@ public abstract class AbstractExtensionHandler implements ExtensionHandler, Init
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        ExtensionHandler.HOLDER.addHandler(this.getType().getValue(), this);
+        ExtensionHandler.HOLDER.addHandler(this.getType(), this);
     }
 }

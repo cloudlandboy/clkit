@@ -43,6 +43,9 @@ public class BaseEntity {
         LocalDateTime now = LocalDateTime.now();
         this.createdTime = now;
         this.updatedTime = now;
+        if (this instanceof IVersionEntity) {
+            ((IVersionEntity) this).setVersion(1);
+        }
     }
 
     @PreUpdate

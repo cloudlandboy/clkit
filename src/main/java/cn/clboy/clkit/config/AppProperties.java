@@ -44,5 +44,9 @@ public class AppProperties {
      */
     private Boolean openOnStartup = true;
 
+    /**
+     * 本地模式,开放net、os包下的相关接口
+     */
+    private Boolean localMode = true;
 
 }

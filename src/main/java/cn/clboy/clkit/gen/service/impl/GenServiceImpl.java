@@ -1,5 +1,6 @@
 package cn.clboy.clkit.gen.service.impl;
 
+import cn.clboy.clkit.common.util.ClassCodeUtils;
 import cn.clboy.clkit.common.util.HttpUtils;
 import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.gen.component.CrudFilenameFactory;
@@ -49,6 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -144,7 +146,7 @@ public class GenServiceImpl implements GenService {
                 StringWriter result = new StringWriter();
                 template.process(dataModel, result);
                 paths[index] = filenameFactoryMap.get(module.getName()).getFilename(dataModel);
-                iss[index] = new ByteArrayInputStream(result.toString().getBytes());
+                iss[index] = new ByteArrayInputStream(result.toString().getBytes(StandardCharsets.UTF_8));
                 index++;
             }
         }
@@ -195,6 +197,11 @@ public class GenServiceImpl implements GenService {
         ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
         codeModel.build(new ZipCodeWriter(os));
         HttpUtils.writeFile(response, os.toByteArray(), "application/zip", dto.getClassName() + ".zip");
+    }
+
+    @Override
+    public String genWrapperJavaClass(String sourceCode) {
+        return ClassCodeUtils.genWrapperClassCode(sourceCode);
     }
 
     /**

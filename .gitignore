@@ -32,6 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### env file ###
+.env.local
+
 ### ui file ###
 clkit_extensions/
 src/main/resources/public

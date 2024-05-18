@@ -7,12 +7,19 @@ spring:
     url: jdbc:h2:~/.clkit/db
     driver-class-name: org.h2.Driver
   jpa:
-    show-sql: false
+    show-sql: ${CLKIT_SHOW_SQL:false}
     hibernate:
       ddl-auto: update
   h2:
     console:
       enabled: true
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+  sql:
+    init:
+      mode: never
 management:
   endpoints:
     web:
@@ -26,8 +33,8 @@ springdoc:
       paths-to-match: '/**'
       packages-to-scan: cn.clboy.clkit
 clkit:
-  open-on-startup: false
+  open-on-startup: ${CLKIT_OPEN_ON_STARTUP:true}
   version: @project.version@
 logging:
   level:
-    root: info
+    root: ${CLKIT_LOG_LEVEL:error}

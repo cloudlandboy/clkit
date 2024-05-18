@@ -1,5 +1,6 @@
 package cn.clboy.clkit.gen.controller;
 
+import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.gen.dto.GenCrudDTO;
 import cn.clboy.clkit.gen.dto.GenJavaClassDTO;
 import cn.clboy.clkit.gen.service.GenService;
@@ -39,5 +40,15 @@ public class GenController {
     @PostMapping("java_class")
     public void genJavaClass(@Validated @RequestBody GenJavaClassDTO dto, HttpServletResponse response) {
         genService.genJavaClass(dto, response);
+    }
+
+    /**
+     * 生成java包装类
+     *
+     * @param sourceCode 源代码
+     */
+    @PostMapping("wrapper_java_class")
+    public ApiResult<String> genWrapperJavaClass(String sourceCode) {
+        return ApiResult.ok(genService.genWrapperJavaClass(sourceCode));
     }
 }

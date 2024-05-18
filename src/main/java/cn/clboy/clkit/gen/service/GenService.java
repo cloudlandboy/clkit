@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author clboy
  * @date 2024/04/23 15:30:16
  */
-public interface GenService {
+public interface GenService<T> {
 
     /**
      * 生crud
@@ -28,4 +28,16 @@ public interface GenService {
      * @param response 响应
      */
     void genJavaClass(GenJavaClassDTO dto, HttpServletResponse response);
+
+    /**
+     * gen包装器Java类
+     *
+     * @param sourceCode 源代码
+     */
+    String genWrapperJavaClass(String sourceCode);
+
+    default <S> S aa(T t, S s) {
+        return null;
+    }
+
 }

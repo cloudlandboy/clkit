@@ -2,13 +2,17 @@ package cn.clboy.clkit.app.controller;
 
 import cn.clboy.clkit.app.dto.ExportDataDTO;
 import cn.clboy.clkit.app.service.AppService;
+import cn.clboy.clkit.common.vo.ValueLabelVO;
 import cn.clboy.clkit.common.web.ApiResult;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * app Controller
@@ -51,5 +55,24 @@ public class AppController {
     @GetMapping("version")
     public ApiResult<String> getVersion() {
         return ApiResult.ok(appService.getVersion());
+    }
+
+    /**
+     * 获取字典
+     */
+    @GetMapping("dict")
+    @Operation(tags = "获取字典")
+    @Parameter(name = "types", description = "字典类型,多个英文逗号分隔")
+    public ApiResult<Map<String, List<ValueLabelVO>>> getDict(String types) {
+        return ApiResult.ok(appService.getDict(types));
+    }
+
+    /**
+     * 获取字典js常量声明
+     */
+    @GetMapping("dict_js_const_declare")
+    @Operation(tags = "获取字典js常量声明")
+    public String getDictJsConstDeclare() {
+        return appService.getDictJsConstDeclare();
     }
 }

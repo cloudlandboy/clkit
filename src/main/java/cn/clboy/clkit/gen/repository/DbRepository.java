@@ -1,7 +1,7 @@
 package cn.clboy.clkit.gen.repository;
 
+import cn.clboy.clkit.common.component.jpa.BaseRepository;
 import cn.clboy.clkit.gen.entity.Db;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  * @date 2024/04/18 16:46:29
  */
 @Repository
-public interface DbRepository extends JpaRepository<Db, Long> {
+public interface DbRepository extends BaseRepository<Db, Long> {
 
     /**
      * 按名称存在

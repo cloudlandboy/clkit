@@ -11,7 +11,7 @@ import cn.clboy.clkit.extension.entity.Extension;
  * @date 2024/05/07 09:15:16
  */
 public interface ExtensionHandler {
-    HandlerHolder<String, ExtensionHandler> HOLDER = new HandlerHolder<>();
+    HandlerHolder<ExtensionTypeEnum, ExtensionHandler> HOLDER = new HandlerHolder<>();
 
     /**
      * 获取类型

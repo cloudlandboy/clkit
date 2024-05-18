@@ -1,9 +1,9 @@
 package cn.clboy.clkit.common.service;
 
+import cn.clboy.clkit.common.component.jpa.BaseRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author clboy
  * @date 2024/04/18 16:45:06
  */
-public class CrudServiceImpl<T, ID, R extends JpaRepository<T, ID>> implements CrudService<T, ID>, InitializingBean {
+public class CrudServiceImpl<T, ID, R extends BaseRepository<T, ID>> implements CrudService<T, ID>, InitializingBean {
 
     protected R repository;
 

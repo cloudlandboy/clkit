@@ -1,10 +1,12 @@
 package cn.clboy.clkit.app.service;
 
 import cn.clboy.clkit.app.dto.ExportDataDTO;
+import cn.clboy.clkit.common.vo.ValueLabelVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * app服务
@@ -34,4 +36,15 @@ public interface AppService {
      */
     String getVersion();
 
+    /**
+     * 获取字典
+     *
+     * @param types 类型
+     */
+    Map<String, List<ValueLabelVO>> getDict(String types);
+
+    /**
+     * 获取字典js常量声明
+     */
+    String getDictJsConstDeclare();
 }

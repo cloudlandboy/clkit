@@ -1,10 +1,10 @@
 package cn.clboy.clkit.common.service;
 
 import cn.clboy.clkit.app.handler.AppDataHandler;
+import cn.clboy.clkit.common.component.jpa.BaseRepository;
 import cn.clboy.clkit.common.entity.BaseEntity;
 import cn.clboy.clkit.common.entity.IUniqueNameEntity;
 import cn.hutool.core.util.StrUtil;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @author clboy
  * @date 2024/04/28 17:44:38
  */
-public class AppDataHandlerCrudServiceImpl<T, R extends JpaRepository<T, Long>> extends CrudServiceImpl<T, Long, R>
+public class AppDataHandlerCrudServiceImpl<T, R extends BaseRepository<T, Long>> extends CrudServiceImpl<T, Long, R>
         implements AppDataHandler<T> {
 
     private String moduleName;
