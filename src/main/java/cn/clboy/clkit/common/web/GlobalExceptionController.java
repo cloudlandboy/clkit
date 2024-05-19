@@ -7,6 +7,7 @@ import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,10 +95,22 @@ public class GlobalExceptionController extends AbstractErrorController {
      * @param ex ex
      */
     @ExceptionHandler(BindException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiResult<Object> bindException(BindException ex) {
         return ApiResult.builder().msg(ex.getAllErrors().get(0).getDefaultMessage())
                 .code(HttpStatus.BAD_REQUEST.value()).build();
+    }
+
+    /**
+     * 访问拒绝异常
+     *
+     * @param ex ex
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResult<Object> accessDeniedException(AccessDeniedException ex) {
+        return ApiResult.builder().msg(ex.getMessage())
+                .code(HttpStatus.UNAUTHORIZED.value()).build();
     }
 
 }

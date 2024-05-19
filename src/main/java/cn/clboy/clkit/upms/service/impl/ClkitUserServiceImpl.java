@@ -1,9 +1,13 @@
 package cn.clboy.clkit.upms.service.impl;
 
+import cn.clboy.clkit.common.component.security.ClkitAuthUser;
 import cn.clboy.clkit.common.service.AppDataHandlerCrudServiceImpl;
+import cn.clboy.clkit.common.util.SecurityUtils;
+import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.upms.entity.ClkitUser;
 import cn.clboy.clkit.upms.repository.ClkitUserRepository;
 import cn.clboy.clkit.upms.service.ClkitUserService;
+import cn.clboy.clkit.upms.vo.UserInfoVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,5 +30,12 @@ public class ClkitUserServiceImpl extends AppDataHandlerCrudServiceImpl<ClkitUse
         return this.repository.findOne(builder -> {
             builder.equal(ClkitUser::getName, name);
         });
+    }
+
+    @Override
+    public UserInfoVO getUserInfo() {
+        ClkitAuthUser loginUser = SecurityUtils.getLoginUserNonNull();
+        ClkitUser user = this.getById(loginUser.getUserId());
+        return UserInfoVO.with(user, loginUser.getAuthorities());
     }
 }

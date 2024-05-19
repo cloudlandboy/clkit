@@ -35,6 +35,7 @@ public class AppUtils {
      * @param appProperties 应用程序属性
      */
     public static void setAppProperties(AppProperties appProperties) {
+        AppUtils.appProperties = appProperties;
         File appDirfile = new File(FileUtil.getAbsolutePath(appProperties.getDataDirPath()));
         Assert.isTrue(appDirfile.exists() || appDirfile.mkdir(), "创建数据目录出错");
         AppUtils.dataDirPath = appDirfile.getAbsolutePath();

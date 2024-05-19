@@ -12,6 +12,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.orm.hibernate5.support.OpenSessionInViewFilter;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,16 +37,20 @@ public class AppConfig implements InitializingBean, WebMvcConfigurer {
     private final AppProperties appProperties;
 
     @Bean
-    public CorsFilter corsFilter() {
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
         UrlBasedCorsConfigurationSource cfgSource = new UrlBasedCorsConfigurationSource();
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.addAllowedOriginPattern("http://127.0.0.1:[*]");
+        cfg.addAllowedOriginPattern("*");
         cfg.addAllowedMethod("*");
         cfg.addAllowedHeader("*");
         cfg.setAllowCredentials(Boolean.TRUE);
         cfg.setMaxAge(Duration.ofDays(1));
         cfgSource.registerCorsConfiguration("/**", cfg);
-        return new CorsFilter(cfgSource);
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>();
+        bean.setFilter(new CorsFilter(cfgSource));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
+        bean.setName("corsFilter");
+        return bean;
     }
 
     @Bean
@@ -53,7 +58,7 @@ public class AppConfig implements InitializingBean, WebMvcConfigurer {
         FilterRegistrationBean<ExtensionResourceFilter> bean = new FilterRegistrationBean<>();
         bean.setFilter(new ExtensionResourceFilter());
         bean.setName("extensionResourceFilter");
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 3);
         return bean;
     }
 
@@ -75,4 +80,5 @@ public class AppConfig implements InitializingBean, WebMvcConfigurer {
     public void afterPropertiesSet() throws Exception {
         AppUtils.setAppProperties(appProperties);
     }
+
 }

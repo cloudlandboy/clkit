@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,7 @@ public class ExtensionController {
      * @param dto DTO
      */
     @PostMapping
+    @PreAuthorize("@authChecker.hasPermission('extension_manage')")
     public ApiResult<Extension> save(@Validated @RequestBody Extension dto) {
         return ApiResult.ok(extensionService.save(dto));
     }
@@ -47,6 +49,7 @@ public class ExtensionController {
      * @param dto DTO
      */
     @PutMapping
+    @PreAuthorize("@authChecker.hasPermission('extension_manage')")
     public ApiResult<Extension> update(@Validated @RequestBody Extension dto) {
         return ApiResult.ok(extensionService.updateById(dto));
     }
@@ -76,6 +79,7 @@ public class ExtensionController {
      * @param id ID
      */
     @DeleteMapping("{id}")
+    @PreAuthorize("@authChecker.hasPermission('extension_manage')")
     public ApiResult<Void> removeById(@PathVariable Long id) {
         extensionService.removeById(id);
         return ApiResult.ok();
@@ -92,19 +96,20 @@ public class ExtensionController {
     }
 
     /**
-     * 获取类型
+     * 获取树
      */
     @GetMapping("tree")
-    @Operation(summary = "获取类型列表")
+    @Operation(summary = "获取树")
     public ApiResult<List<Tree<Long>>> getTree(Boolean filterInstalled) {
         return ApiResult.ok(extensionService.getTree(filterInstalled));
     }
 
     /**
-     * 获取类型
+     * 安装
      */
     @PostMapping("install/{id}")
     @Operation(summary = "安装")
+    @PreAuthorize("@authChecker.hasPermission('extension_manage')")
     public ApiResult<Void> install(@PathVariable("id") Long id) {
         extensionService.install(id);
         return ApiResult.ok();

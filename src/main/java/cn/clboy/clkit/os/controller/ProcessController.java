@@ -4,6 +4,7 @@ import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.os.service.ProcessService;
 import cn.clboy.clkit.os.vo.PidInfoVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,7 @@ public class ProcessController {
      * @param value 值
      */
     @GetMapping("info/{type}/{value}")
+    @PreAuthorize("@authChecker.hasPermission('os_process_view')")
     public ApiResult<List<PidInfoVO>> getInfo(@PathVariable("type") String type, @PathVariable("value") String value) {
         return ApiResult.ok(processService.getInfo(type, value));
     }

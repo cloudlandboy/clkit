@@ -6,6 +6,7 @@ import cn.clboy.clkit.gen.service.DbService;
 import cn.clboy.clkit.gen.vo.TableBasicVO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class DbController {
      * @param dto DTO
      */
     @PostMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_db_manage')")
     public ApiResult<Db> save(@Validated @RequestBody Db dto) {
         return ApiResult.ok(dbService.save(dto));
     }
@@ -40,6 +42,7 @@ public class DbController {
      * @param dto DTO
      */
     @PutMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_db_manage')")
     public ApiResult<Db> update(@Validated @RequestBody Db dto) {
         return ApiResult.ok(dbService.updateById(dto));
     }
@@ -50,6 +53,7 @@ public class DbController {
      * @param id ID
      */
     @GetMapping("{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_db_view')")
     public ApiResult<Db> getById(@PathVariable Long id) {
         return ApiResult.ok(dbService.getById(id));
     }
@@ -58,6 +62,7 @@ public class DbController {
      * 获取所有
      */
     @GetMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_db_view')")
     public ApiResult<List<Db>> getAll() {
         return ApiResult.ok(dbService.getAll());
     }
@@ -68,6 +73,7 @@ public class DbController {
      * @param id ID
      */
     @DeleteMapping("{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_db_manage')")
     public ApiResult<Void> removeById(@PathVariable Long id) {
         dbService.removeById(id);
         return ApiResult.ok();
@@ -80,6 +86,7 @@ public class DbController {
      * @param keyword 关键字
      */
     @GetMapping("/query_table/{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_db_view')")
     public ApiResult<List<TableBasicVO>> queryTable(@PathVariable Long id, String keyword) {
         return ApiResult.ok(dbService.queryTable(id, keyword));
     }

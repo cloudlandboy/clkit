@@ -4,6 +4,7 @@ import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.gen.entity.CrudTemplate;
 import cn.clboy.clkit.gen.service.CrudTemplateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class CrudTemplateController {
      * @param dto DTO
      */
     @PostMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_curd_template_manage')")
     public ApiResult<CrudTemplate> save(@Validated @RequestBody CrudTemplate dto) {
         return ApiResult.ok(crudTemplateService.save(dto));
     }
@@ -38,16 +40,18 @@ public class CrudTemplateController {
      * @param dto DTO
      */
     @PutMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_curd_template_manage')")
     public ApiResult<CrudTemplate> update(@Validated @RequestBody CrudTemplate dto) {
         return ApiResult.ok(crudTemplateService.updateById(dto));
     }
 
     /**
-     * 更新
+     * 获取通过ID
      *
      * @param id ID
      */
     @GetMapping("{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_curd_template_view')")
     public ApiResult<CrudTemplate> getById(@PathVariable Long id) {
         return ApiResult.ok(crudTemplateService.getById(id));
     }
@@ -56,6 +60,7 @@ public class CrudTemplateController {
      * 获取所有
      */
     @GetMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_curd_template_view')")
     public ApiResult<List<CrudTemplate>> getAll() {
         return ApiResult.ok(crudTemplateService.getAll());
     }
@@ -66,6 +71,7 @@ public class CrudTemplateController {
      * @param id ID
      */
     @DeleteMapping("{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_curd_template_manage')")
     public ApiResult<Void> removeById(@PathVariable Long id) {
         crudTemplateService.removeById(id);
         return ApiResult.ok();
@@ -77,6 +83,7 @@ public class CrudTemplateController {
      * @param id ID
      */
     @PutMapping("unlock/{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_curd_template_manage')")
     public ApiResult<Void> unlockById(@PathVariable Long id) {
         crudTemplateService.unlockById(id);
         return ApiResult.ok();

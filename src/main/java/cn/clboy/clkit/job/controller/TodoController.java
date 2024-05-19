@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "待办管理")
 @RestController
-@RequestMapping("job/todo")
 @RequiredArgsConstructor
+@RequestMapping("job/todo")
 public class TodoController {
 
     private final TodoService todoService;
@@ -34,6 +35,7 @@ public class TodoController {
      */
     @GetMapping("page")
     @Operation(tags = "分页查询")
+    @PreAuthorize("@authChecker.hasPermission('job_todo_view')")
     public ApiResult<Page<Todo>> getPageByQuery(Pageable page, TodoQuery query) {
         return ApiResult.ok(todoService.getPageByQuery(page, query));
     }
@@ -45,6 +47,7 @@ public class TodoController {
      */
     @PostMapping
     @Operation(tags = "新增")
+    @PreAuthorize("@authChecker.hasPermission('job_todo_manage')")
     public ApiResult<Todo> save(@Validated @RequestBody Todo todo) {
         return ApiResult.ok(todoService.save(todo));
     }
@@ -56,6 +59,7 @@ public class TodoController {
      */
     @PutMapping
     @Operation(tags = "更新")
+    @PreAuthorize("@authChecker.hasPermission('job_todo_manage')")
     public ApiResult<Todo> update(@Validated @RequestBody Todo todo) {
         return ApiResult.ok(todoService.updateById(todo));
     }
@@ -68,6 +72,7 @@ public class TodoController {
      */
     @Operation(tags = "更新状态")
     @PostMapping("update_status/{id}")
+    @PreAuthorize("@authChecker.hasPermission('job_todo_manage')")
     public ApiResult<String> updateStatus(@PathVariable("id") Long id, Boolean isDone) {
         return ApiResult.ok(todoService.updateStatus(id, isDone));
     }

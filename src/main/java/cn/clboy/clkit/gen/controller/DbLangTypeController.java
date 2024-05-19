@@ -4,6 +4,7 @@ import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.gen.entity.DbLangType;
 import cn.clboy.clkit.gen.service.DbLangTypeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class DbLangTypeController {
      * @param dto DTO
      */
     @PostMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_db_lang_type_manage')")
     public ApiResult<DbLangType> save(@Validated @RequestBody DbLangType dto) {
         return ApiResult.ok(dbLangTypeService.save(dto));
     }
@@ -38,16 +40,18 @@ public class DbLangTypeController {
      * @param dto DTO
      */
     @PutMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_db_lang_type_manage')")
     public ApiResult<DbLangType> update(@Validated @RequestBody DbLangType dto) {
         return ApiResult.ok(dbLangTypeService.updateById(dto));
     }
 
     /**
-     * 更新
+     * 获取通过ID
      *
      * @param id ID
      */
     @GetMapping("{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_db_lang_type_view')")
     public ApiResult<DbLangType> getById(@PathVariable Long id) {
         return ApiResult.ok(dbLangTypeService.getById(id));
     }
@@ -56,6 +60,7 @@ public class DbLangTypeController {
      * 获取所有
      */
     @GetMapping
+    @PreAuthorize("@authChecker.hasPermission('gen_db_lang_type_view')")
     public ApiResult<List<DbLangType>> getAll() {
         return ApiResult.ok(dbLangTypeService.getAll());
     }
@@ -64,6 +69,7 @@ public class DbLangTypeController {
      * 获取所有语言
      */
     @GetMapping("get_all_lang")
+    @PreAuthorize("@authChecker.hasPermission('gen_db_lang_type_view')")
     public ApiResult<List<String>> getAllLang() {
         return ApiResult.ok(dbLangTypeService.getAllLang());
     }
@@ -74,6 +80,7 @@ public class DbLangTypeController {
      * @param id ID
      */
     @DeleteMapping("{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_db_lang_type_manage')")
     public ApiResult<Void> removeById(@PathVariable Long id) {
         dbLangTypeService.removeById(id);
         return ApiResult.ok();
@@ -85,6 +92,7 @@ public class DbLangTypeController {
      * @param id ID
      */
     @PostMapping("unlock/{id}")
+    @PreAuthorize("@authChecker.hasPermission('gen_db_lang_type_manage')")
     public ApiResult<Void> unlockById(@PathVariable Long id) {
         dbLangTypeService.unlockById(id);
         return ApiResult.ok();
@@ -94,6 +102,7 @@ public class DbLangTypeController {
      * 通过DB平台和语言类型获取
      */
     @GetMapping("find")
+    @PreAuthorize("@authChecker.hasPermission('gen_db_lang_type_view')")
     public ApiResult<List<DbLangType>> find(String dbPlatform, String langType) {
         return ApiResult.ok(dbLangTypeService.find(dbPlatform, langType));
     }

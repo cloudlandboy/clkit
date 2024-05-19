@@ -5,6 +5,7 @@ import cn.clboy.clkit.net.query.ScanPortQuery;
 import cn.clboy.clkit.net.service.LanService;
 import cn.clboy.clkit.net.vo.IpPortListVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,8 +19,9 @@ import java.util.List;
  * @date 2024/04/22 10:12:39
  */
 @RestController
-@RequestMapping("net/lan")
 @RequiredArgsConstructor
+@RequestMapping("net/lan")
+@PreAuthorize("@authChecker.hasPermission('net_lan_view')")
 public class LanController {
 
     private final LanService lanService;

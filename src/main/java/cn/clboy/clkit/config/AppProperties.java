@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 应用程序属性
@@ -48,5 +49,20 @@ public class AppProperties {
      * 本地模式,开放net、os包下的相关接口
      */
     private Boolean localMode = true;
+
+    /**
+     * 访问令牌有效时长，默认12小时
+     */
+    private Long accessTokenDuration = 12L;
+
+    /**
+     * 刷新令牌有效时长，默认30天
+     */
+    private Long refreshTokenDuration = TimeUnit.DAYS.toHours(30);
+
+    /**
+     * 令牌时长单位，默认小时，作用于：accessTokenDuration,refreshTokenDuration
+     */
+    private TimeUnit tokenDurationUnit = TimeUnit.HOURS;
 
 }

@@ -2,6 +2,7 @@ package cn.clboy.clkit.upms.service;
 
 import cn.clboy.clkit.common.service.CrudService;
 import cn.clboy.clkit.upms.entity.ClkitUser;
+import cn.clboy.clkit.upms.vo.UserInfoVO;
 
 import java.util.Optional;
 
@@ -20,4 +21,10 @@ public interface ClkitUserService extends CrudService<ClkitUser, Long> {
      * @param name 名称
      */
     Optional<ClkitUser> getByName(String name);
+
+    /**
+     * 获取用户信息
+     */
+    UserInfoVO getUserInfo();
+
 }

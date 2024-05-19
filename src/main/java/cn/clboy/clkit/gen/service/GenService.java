@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author clboy
  * @date 2024/04/23 15:30:16
  */
-public interface GenService<T> {
+public interface GenService {
 
     /**
      * 生crud
@@ -35,9 +35,5 @@ public interface GenService<T> {
      * @param sourceCode 源代码
      */
     String genWrapperJavaClass(String sourceCode);
-
-    default <S> S aa(T t, S s) {
-        return null;
-    }
 
 }

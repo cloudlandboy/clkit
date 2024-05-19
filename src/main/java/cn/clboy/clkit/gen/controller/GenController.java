@@ -5,6 +5,7 @@ import cn.clboy.clkit.gen.dto.GenCrudDTO;
 import cn.clboy.clkit.gen.dto.GenJavaClassDTO;
 import cn.clboy.clkit.gen.service.GenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,7 @@ public class GenController {
      * 生成crud代码
      */
     @PostMapping("crud")
+    @PreAuthorize("@authChecker.hasPermission('gen_crud')")
     public void genCrud(@Validated @RequestBody GenCrudDTO dto, HttpServletResponse response) {
         genService.genCrud(dto, response);
     }

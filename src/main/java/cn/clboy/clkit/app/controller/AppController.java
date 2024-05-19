@@ -7,6 +7,7 @@ import cn.clboy.clkit.common.web.ApiResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +35,7 @@ public class AppController {
      * @param response 响应
      */
     @PostMapping("/export")
+    @PreAuthorize("@authChecker.hasPermission('app_export')")
     public void exportData(@RequestBody List<ExportDataDTO> dtoList, HttpServletResponse response) {
         appService.exportData(dtoList, response);
     }
@@ -45,6 +47,7 @@ public class AppController {
      * @param file 文件
      */
     @PostMapping("/import")
+    @PreAuthorize("@authChecker.hasPermission('app_import')")
     public void importData(MultipartFile file) {
         appService.importData(file);
     }
