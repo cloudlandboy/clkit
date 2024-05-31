@@ -46,4 +46,11 @@ public class ClkitProperty extends BaseEntity implements IUniqueNameEntity {
     @Comment("内置的")
     @Column(nullable = false)
     private Boolean internal;
+
+    /**
+     * 可编辑
+     */
+    @Comment("可编辑")
+    @Column(nullable = false)
+    private Boolean editable;
 }

@@ -33,7 +33,7 @@ public class DbLangType extends BaseEntity implements IUniqueNameEntity {
      * 唯一名称
      */
     @Comment("唯一名称")
-    @NotBlank(message = "invalid name")
+    @NotBlank
     @Column(unique = true, nullable = false)
     private String name;
 
@@ -41,21 +41,21 @@ public class DbLangType extends BaseEntity implements IUniqueNameEntity {
      * 数据库平台
      */
     @Comment("数据库平台")
-    @NotNull(message = "invalid dbPlatform")
+    @NotNull
     private DbPlatformEnum dbPlatform;
 
     /**
      * 语言类型
      */
     @Comment("语言类型")
-    @NotBlank(message = "invalid langType")
+    @NotBlank
     private String langType;
 
     /**
      * 锁定
      */
     @Comment("是否锁定")
-    @NotNull(message = "invalid locked")
+    @NotNull
     private Boolean locked;
 
     /**
@@ -63,7 +63,7 @@ public class DbLangType extends BaseEntity implements IUniqueNameEntity {
      */
     @Lob
     @Comment("语言类型与数据库类型匹配规则列表")
-    @NotEmpty(message = "invalid matchList")
+    @NotEmpty
     @Convert(converter = LangTypeMatchListAttributeConverter.class)
     private List<LangTypeMatchDTO> matchList;
 

@@ -4,8 +4,10 @@ import cn.clboy.clkit.common.component.jpa.BaseRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,7 +16,7 @@ import java.util.List;
  * @author clboy
  * @date 2024/04/18 16:45:06
  */
-public class CrudServiceImpl<T, ID, R extends BaseRepository<T, ID>> implements CrudService<T, ID>, InitializingBean {
+public abstract class CrudServiceImpl<T, ID, R extends BaseRepository<T, ID>> implements CrudService<T, ID>, InitializingBean {
 
     protected R repository;
 
@@ -27,13 +29,15 @@ public class CrudServiceImpl<T, ID, R extends BaseRepository<T, ID>> implements 
     }
 
     @Override
-    public T save(T dto) {
-        return repository.save(dto);
+    @Transactional(rollbackFor = Exception.class)
+    public T save(T entity) {
+        return repository.save(entity);
     }
 
     @Override
-    public T updateById(T dto) {
-        return repository.save(dto);
+    @Transactional(rollbackFor = Exception.class)
+    public T updateById(T entity) {
+        return repository.save(entity);
     }
 
     @Override
@@ -42,11 +46,17 @@ public class CrudServiceImpl<T, ID, R extends BaseRepository<T, ID>> implements 
     }
 
     @Override
+    public List<T> getByIds(Collection<ID> ids) {
+        return repository.findAllById(ids);
+    }
+
+    @Override
     public List<T> getAll() {
         return repository.findAll();
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeById(ID id) {
         repository.deleteById(id);
     }

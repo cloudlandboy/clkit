@@ -78,4 +78,13 @@ public class AppController {
     public String getDictJsConstDeclare() {
         return appService.getDictJsConstDeclare();
     }
+
+    /**
+     * 获取权限js常量声明
+     */
+    @GetMapping("permission_js_const_declare")
+    @Operation(tags = "获取字典js常量声明")
+    public String getPermissionJsConstDeclare() {
+        return appService.getPermissionJsConstDeclare();
+    }
 }

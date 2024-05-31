@@ -1,5 +1,6 @@
 package cn.clboy.clkit.os.handler;
 
+import cn.clboy.clkit.os.metadata.LanHostMetadata;
 import cn.clboy.clkit.os.vo.PidInfoVO;
 import cn.hutool.system.OsInfo;
 
@@ -41,4 +42,11 @@ public interface OsHandler {
      * @param url URL
      */
     void openUrl(String url);
+
+    /**
+     * 获取ARP信息
+     *
+     * @param assignedIp 指派IP
+     */
+    List<LanHostMetadata> getArpInfo(String assignedIp);
 }

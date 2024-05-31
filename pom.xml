@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.clboy</groupId>
     <artifactId>clkit</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.5</version>
     <name>clkit</name>
     <description>软件开发工具箱</description>
     <packaging>jar</packaging>
@@ -13,13 +13,14 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>2.7.6</spring-boot.version>
+        <spring.boot.version>2.7.6</spring.boot.version>
         <hutool.version>5.8.26</hutool.version>
         <h2.version>2.2.224</h2.version>
         <knife4j.version>4.4.0</knife4j.version>
         <jsonschema2pojo.version>1.2.1</jsonschema2pojo.version>
         <okhttp.version>4.12.0</okhttp.version>
         <javaparser.version>3.24.2</javaparser.version>
+        <druid.version>1.2.22</druid.version>
     </properties>
     <dependencies>
         <dependency>
@@ -73,6 +74,11 @@
             <artifactId>javaparser-symbol-solver-core</artifactId>
             <version>${javaparser.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
         <!-- spring 全家桶-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -109,7 +115,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
+                <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -128,13 +134,23 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.ico</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.ico</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
+                <version>${spring.boot.version}</version>
                 <configuration>
                     <mainClass>cn.clboy.clkit.ClkitApplication</mainClass>
                 </configuration>

@@ -8,6 +8,7 @@ import cn.clboy.clkit.common.constants.DictDeclare;
 import cn.clboy.clkit.common.constants.enums.IValueLabelEnum;
 import cn.clboy.clkit.common.vo.ValueLabelVO;
 import cn.clboy.clkit.config.AppProperties;
+import cn.clboy.clkit.upms.service.PermissionService;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.net.URLEncodeUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,6 +48,7 @@ public class AppServiceImpl implements AppService, InitializingBean {
 
     private final ObjectMapper objectMapper;
     private final AppProperties appProperties;
+    private final PermissionService permissionService;
     private final TransactionTemplate transactionTemplate;
 
     @Override
@@ -145,6 +147,11 @@ public class AppServiceImpl implements AppService, InitializingBean {
             statement.add(joiner.toString());
         });
         return String.join("<br/><br/>", statement);
+    }
+
+    @Override
+    public String getPermissionJsConstDeclare() {
+        return permissionService.getPermissionJsConstDeclare();
     }
 
     @Override

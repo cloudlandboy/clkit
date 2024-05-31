@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 
 /**
  * clkit 应用程序
@@ -65,6 +66,7 @@ public class ClkitApplication {
             property.setPropKey(ClkitConstant.DATA_INITIALIZED_KEY);
             property.setPropValue(Boolean.FALSE.toString());
             property.setInternal(Boolean.TRUE);
+            property.setEditable(Boolean.FALSE);
         }
         if (Boolean.TRUE.toString().equals(property.getPropValue())) {
             return;
@@ -72,6 +74,7 @@ public class ClkitApplication {
         DataSource dataSource = context.getBean(DataSource.class);
         SqlInitializationProperties initializationProperties = new SqlInitializationProperties();
         initializationProperties.setMode(DatabaseInitializationMode.ALWAYS);
+        initializationProperties.setEncoding(StandardCharsets.UTF_8);
         SqlDataSourceScriptDatabaseInitializer initializer = new SqlDataSourceScriptDatabaseInitializer(dataSource, initializationProperties);
         initializer.setResourceLoader(context);
         initializer.initializeDatabase();

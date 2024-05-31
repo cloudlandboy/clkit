@@ -1,7 +1,6 @@
 package cn.clboy.clkit.common.service;
 
-import cn.clboy.clkit.gen.entity.Db;
-
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -32,6 +31,13 @@ public interface CrudService<T, ID> {
      * @param id ID
      */
     T getById(ID id);
+
+    /**
+     * 批量获取通过ID
+     *
+     * @param ids ids
+     */
+    List<T> getByIds(Collection<ID> ids);
 
     /**
      * 获取所有

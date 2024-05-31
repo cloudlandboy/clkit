@@ -1,6 +1,7 @@
 package cn.clboy.clkit.upms.vo;
 
 import cn.clboy.clkit.upms.entity.ClkitUser;
+import cn.clboy.clkit.upms.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,17 +45,24 @@ public class UserInfoVO {
     private String email;
 
     /**
+     * 角色列表
+     */
+    private List<String> roleNameList;
+
+    /**
      * 权限列表
      */
     @Schema(description = "权限列表")
     private List<String> permissionList;
 
+
     public static UserInfoVO with(ClkitUser user, Collection<? extends GrantedAuthority> authorities) {
         UserInfoVO infoVO = new UserInfoVO();
         infoVO.setName(user.getName());
         infoVO.setNickname(user.getNickname());
-        infoVO.setRealName(user.getRealName());
+        infoVO.setRealName(user.getRealName());//帐号密码
         infoVO.setEmail(user.getEmail());
+        infoVO.setRoleNameList(user.getRole().stream().map(Role::getName).collect(Collectors.toList()));
         infoVO.setPermissionList(authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
         return infoVO;
     }

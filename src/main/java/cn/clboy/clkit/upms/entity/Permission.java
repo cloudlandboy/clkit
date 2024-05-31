@@ -1,6 +1,7 @@
 package cn.clboy.clkit.upms.entity;
 
 import cn.clboy.clkit.common.entity.BaseEntity;
+import cn.clboy.clkit.common.entity.IUniqueNameEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Comment;
@@ -17,13 +18,13 @@ import javax.persistence.Entity;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public class Permission extends BaseEntity {
+public class Permission extends BaseEntity implements IUniqueNameEntity {
 
     /**
      * 名称
      */
     @Comment("名称")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     /**

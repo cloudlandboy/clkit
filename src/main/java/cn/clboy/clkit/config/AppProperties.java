@@ -25,30 +25,25 @@ public class AppProperties {
     /**
      * 版本
      */
-    @NotBlank(message = "invalid version")
+    @NotBlank
     public String version;
 
     /**
      * 数据目录路径
      */
-    @NotBlank(message = "invalid dataDirPath")
+    @NotBlank
     private String dataDirPath = DEFAULT_DATA_DIR_PATH;
 
     /**
      * 扩展目录路径
      */
-    @NotBlank(message = "invalid extensionDirPath")
+    @NotBlank
     private String extensionDirPath = DEFAULT_EXTENSION_DIR_PATH;
 
     /**
      * 启动时打开
      */
     private Boolean openOnStartup = true;
-
-    /**
-     * 本地模式,开放net、os包下的相关接口
-     */
-    private Boolean localMode = true;
 
     /**
      * 访问令牌有效时长，默认12小时

@@ -3,6 +3,7 @@ package cn.clboy.clkit.common.component.security;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationConverter;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,8 +25,10 @@ public class ClkitAuthenticationConverter implements AuthenticationConverter {
         }
 
         if ("refresh_token".equals(grantType)) {
-            String refreshToken = request.getParameter("refresh_token");
-
+            String refreshToken = request.getParameter("refreshToken");
+            if (StringUtils.hasText(refreshToken)) {
+                return new RefreshTokenAuthenticationToken(refreshToken);
+            }
         }
 
         return null;

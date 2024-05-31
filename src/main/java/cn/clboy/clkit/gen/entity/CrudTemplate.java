@@ -33,7 +33,7 @@ public class CrudTemplate extends BaseEntity implements IUniqueNameEntity {
      * 唯一名称
      */
     @Comment("唯一名称")
-    @NotBlank(message = "invalid name")
+    @NotBlank
     @Column(unique = true, nullable = false)
     private String name;
 
@@ -41,21 +41,21 @@ public class CrudTemplate extends BaseEntity implements IUniqueNameEntity {
      * 语言
      */
     @Comment("语言")
-    @NotBlank(message = "invalid lang")
+    @NotBlank
     private String lang;
 
     /**
      * 模板引擎
      */
     @Comment("模板引擎")
-    @NotNull(message = "invalid engine")
+    @NotNull
     private TemplateEngineEnum engine;
 
     /**
      * 已锁定
      */
     @Comment("已锁定")
-    @NotNull(message = "invalid locked")
+    @NotNull
     private Boolean locked;
 
     /**
@@ -77,7 +77,7 @@ public class CrudTemplate extends BaseEntity implements IUniqueNameEntity {
      */
     @Lob
     @Comment("模块列表")
-    @NotEmpty(message = "invalid modules")
+    @NotEmpty
     @Convert(converter = CrudTemplateModuleListAttributeConverter.class)
     private List<CrudTemplateModule> modules;
 

@@ -1,9 +1,12 @@
 package cn.clboy.clkit.job.service.impl;
 
+import cn.clboy.clkit.common.constants.enums.IValueLabelEnum;
 import cn.clboy.clkit.common.constants.enums.JobReminderTimeEnum;
 import cn.clboy.clkit.common.constants.enums.JobRepeatModeEnum;
 import cn.clboy.clkit.common.constants.enums.TodoStatusEnum;
 import cn.clboy.clkit.common.service.AppDataHandlerCrudServiceImpl;
+import cn.clboy.clkit.common.service.CrudServiceImpl;
+import cn.clboy.clkit.common.util.SecurityUtils;
 import cn.clboy.clkit.job.entity.Todo;
 import cn.clboy.clkit.job.query.TodoQuery;
 import cn.clboy.clkit.job.repository.TodoRepository;
@@ -11,6 +14,7 @@ import cn.clboy.clkit.job.service.TodoService;
 import cn.hutool.core.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,9 +24,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,15 +41,17 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TodoServiceImpl extends AppDataHandlerCrudServiceImpl<Todo, TodoRepository> implements TodoService {
+public class TodoServiceImpl extends CrudServiceImpl<Todo, Long, TodoRepository> implements TodoService {
 
+    @PersistenceContext
+    private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
 
     @Override
     public Page<Todo> getPageByQuery(Pageable page, TodoQuery query) {
         return this.repository.findAll(builder -> {
             if (StringUtils.hasText(query.getStatus())) {
-                builder.equal(Todo::getStatus, query.getStatus());
+                builder.equal(Todo::getStatus, IValueLabelEnum.getByValue(TodoStatusEnum.class, query.getStatus()));
             }
             if (query.getStartDeadlineDate() != null) {
                 builder.greaterThanOrEqualTo(Todo::getDeadlineTime, query.getStartDeadlineDate().atTime(LocalTime.MIN));
@@ -113,7 +122,9 @@ public class TodoServiceImpl extends AppDataHandlerCrudServiceImpl<Todo, TodoRep
             }
             try {
                 transactionTemplate.executeWithoutResult(ac -> {
-                    this.updateStatus(todo, TodoStatusEnum.EXPIRED);
+                    SecurityUtils.runWithInnerEnv(() -> {
+                        this.updateStatus(todo, TodoStatusEnum.EXPIRED);
+                    });
                 });
             } catch (Exception ex) {
                 log.error("处理过期待办失败，待办id：{}", todo.getId(), ex);
@@ -141,27 +152,28 @@ public class TodoServiceImpl extends AppDataHandlerCrudServiceImpl<Todo, TodoRep
         }
 
         todo.setStatus(status);
-        JobRepeatModeEnum currentRepeat = todo.getRepeat();
-        LocalDateTime currentRepeatStopTime = todo.getRepeatStopTime();
+        JobRepeatModeEnum repeat = todo.getRepeat();
+        JobReminderTimeEnum reminder = todo.getReminder();
+        LocalDateTime repeatStopTime = todo.getRepeatStopTime();
         //当期任务取消重复，重复工作由新产生任务延续
-        this.clearRepeat(todo);
+        this.clearExpireInfo(todo);
         this.repository.save(todo);
-        currentRepeat.getCalculator().calculate(todo.getDeadlineTime()).ifPresent(nextDeadlineTime -> {
+        repeat.getCalculator().calculate(todo.getDeadlineTime()).ifPresent(nextDeadlineTime -> {
             Todo nextTodo = new Todo();
-            nextTodo.setFamilyId(todo.getFamilyId());
-            nextTodo.setName(todo.getName());
-            nextTodo.setRemark(todo.getRemark());
-            nextTodo.setRepeat(JobRepeatModeEnum.NOT);
-            //计算下次任务重复规则
-            currentRepeat.getCalculator().calculate(nextDeadlineTime)
-                    .filter(time -> currentRepeatStopTime == null || !time.isAfter(todo.getRepeatStopTime()))
-                    .ifPresent(time -> {
-                        nextTodo.setRepeat(currentRepeat);
-                        nextTodo.setRepeatStopTime(todo.getRepeatStopTime());
-                    });
-            nextTodo.setReminder(todo.getReminder());
+            BeanUtils.copyProperties(todo, nextTodo);
+            nextTodo.setId(null);
             nextTodo.setDeadlineTime(nextDeadlineTime);
-            todo.getReminder().getCalculator().calculate(nextDeadlineTime).ifPresent(nextTodo::setReminderTime);
+            nextTodo.setReminder(reminder);
+            //计算下次任务提醒时间
+            reminder.getCalculator().calculate(nextDeadlineTime).ifPresent(nextTodo::setReminderTime);
+            //计算下次任务重复规则
+            repeat.getCalculator().calculate(nextDeadlineTime)
+                    .filter(time -> repeatStopTime == null || !time.isAfter(repeatStopTime))
+                    .ifPresent(time -> {
+                        nextTodo.setRepeat(repeat);
+                        nextTodo.setRepeatStopTime(repeatStopTime);
+                    });
+
             nextTodo.setStatus(TodoStatusEnum.UNDONE);
             this.repository.save(nextTodo);
         });
@@ -176,18 +188,22 @@ public class TodoServiceImpl extends AppDataHandlerCrudServiceImpl<Todo, TodoRep
      */
     private TodoStatusEnum initialStatus(LocalDateTime deadlineTime) {
         //当前时间>deadlineTime是已过期
-        LocalDateTime now = LocalDate.now().atTime(LocalTime.of(deadlineTime.getHour(), deadlineTime.getMinute()));
+        LocalTime nowTime = LocalTime.now();
+        LocalDateTime now = LocalDate.now().atTime(LocalTime.of(nowTime.getHour(), nowTime.getMinute()));
         return now.isAfter(deadlineTime) ? TodoStatusEnum.EXPIRED : TodoStatusEnum.UNDONE;
     }
 
+
     /**
-     * 清除重复
+     * 清除过期信息
      *
      * @param todo 待办
      */
-    private void clearRepeat(Todo todo) {
+    private void clearExpireInfo(Todo todo) {
         todo.setRepeat(JobRepeatModeEnum.NOT);
         todo.setRepeatStopTime(null);
+        todo.setReminder(JobReminderTimeEnum.NOT);
+        todo.setReminderTime(null);
     }
 
 }

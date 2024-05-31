@@ -1,6 +1,7 @@
 package cn.clboy.clkit.os.handler;
 
 import cn.clboy.clkit.common.component.condition.ConditionalOnOs;
+import cn.clboy.clkit.os.metadata.LanHostMetadata;
 import cn.clboy.clkit.os.vo.PidInfoVO;
 import cn.hutool.core.io.IoUtil;
 import lombok.SneakyThrows;
@@ -79,6 +80,21 @@ public class WindowsOsHandler implements OsHandler {
     public void openUrl(String url) {
         ProcessBuilder ps = new ProcessBuilder("cmd", "/c", "start", url);
         ps.start();
+    }
+
+    @Override
+    @SneakyThrows
+    public List<LanHostMetadata> getArpInfo(String assignedIp) {
+        ProcessBuilder ps = new ProcessBuilder("arp", "/a", "/n", assignedIp);
+        Process process = ps.start();
+        String output = IoUtil.read(process.getInputStream(), StandardCharsets.UTF_8);
+        return Arrays.stream(output.trim().split("\r\n")).skip(2).filter(StringUtils::hasText).map(line -> {
+            String[] part = line.trim().split("\\s+");
+            LanHostMetadata metadata = new LanHostMetadata();
+            metadata.setIp(part[0]);
+            metadata.setMacAddress(part[1]);
+            return metadata;
+        }).collect(Collectors.toList());
     }
 
     /**

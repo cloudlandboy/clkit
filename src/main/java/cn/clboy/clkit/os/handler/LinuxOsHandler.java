@@ -1,6 +1,7 @@
 package cn.clboy.clkit.os.handler;
 
 import cn.clboy.clkit.common.component.condition.ConditionalOnOs;
+import cn.clboy.clkit.os.metadata.LanHostMetadata;
 import cn.clboy.clkit.os.vo.PidInfoVO;
 import cn.hutool.core.io.IoUtil;
 import lombok.SneakyThrows;
@@ -8,10 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -85,6 +83,26 @@ public class LinuxOsHandler extends AbstractOsHandler {
             }
         }
         throw lastException;
+    }
+
+    @Override
+    @SneakyThrows
+    public List<LanHostMetadata> getArpInfo(String assignedIp) {
+        ProcessBuilder ps = new ProcessBuilder("arp", "-n");
+        Process process = ps.start();
+        String output = IoUtil.read(process.getInputStream(), StandardCharsets.UTF_8);
+        return Arrays.stream(output.trim().split("\n"))
+                .skip(1).map(line -> {
+                    String[] part = line.split("\\s+");
+                    if (part.length < 5) {
+                        return null;
+                    }
+                    LanHostMetadata metadata = new LanHostMetadata();
+                    metadata.setIp(part[0]);
+                    metadata.setMacAddress(part[2]);
+                    metadata.setNetworkInterface(part[4]);
+                    return metadata;
+                }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
 

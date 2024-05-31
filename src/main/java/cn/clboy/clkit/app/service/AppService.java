@@ -47,4 +47,10 @@ public interface AppService {
      * 获取字典js常量声明
      */
     String getDictJsConstDeclare();
+
+    /**
+     * 获取权限js常量声明
+     */
+    String getPermissionJsConstDeclare();
+
 }

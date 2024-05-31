@@ -3,8 +3,8 @@ package cn.clboy.clkit.job.entity;
 import cn.clboy.clkit.common.constants.enums.JobReminderTimeEnum;
 import cn.clboy.clkit.common.constants.enums.JobRepeatModeEnum;
 import cn.clboy.clkit.common.constants.enums.TodoStatusEnum;
-import cn.clboy.clkit.common.entity.BaseEntity;
 import cn.clboy.clkit.common.entity.IVersionEntity;
+import cn.clboy.clkit.common.entity.UserIsolationBaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Comment;
@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
         @Index(name = "idx_reminder_time", columnList = "reminderTime"),
 })
 @EqualsAndHashCode(callSuper = true)
-public class Todo extends BaseEntity implements IVersionEntity {
+public class Todo extends UserIsolationBaseEntity implements IVersionEntity {
 
     /**
      * 家族id
@@ -41,7 +41,7 @@ public class Todo extends BaseEntity implements IVersionEntity {
      */
     @Comment("名称")
     @Column(nullable = false)
-    @NotBlank(message = "invalid name")
+    @NotBlank
     private String name;
 
     /**
@@ -56,7 +56,7 @@ public class Todo extends BaseEntity implements IVersionEntity {
     @Comment("重复")
     @Column(nullable = false)
     @Convert(converter = JobRepeatModeEnum.JapConverter.class)
-    @NotNull(message = "invalid repeat")
+    @NotNull
     private JobRepeatModeEnum repeat;
 
     /**
@@ -64,7 +64,7 @@ public class Todo extends BaseEntity implements IVersionEntity {
      */
     @Comment("提醒")
     @Column(nullable = false)
-    @NotNull(message = "invalid reminder")
+    @NotNull
     @Convert(converter = JobReminderTimeEnum.JapConverter.class)
     private JobReminderTimeEnum reminder;
 
@@ -73,7 +73,7 @@ public class Todo extends BaseEntity implements IVersionEntity {
      */
     @Comment("截止时间")
     @Column(nullable = false)
-    @NotNull(message = "invalid deadlineTime")
+    @NotNull
     private LocalDateTime deadlineTime;
 
     /**
@@ -109,7 +109,8 @@ public class Todo extends BaseEntity implements IVersionEntity {
      *
      * @param deadlineTime 截止期限时间
      */
-    public void setDeadlineTime(@NotNull(message = "invalid deadlineTime") LocalDateTime deadlineTime) {
-        this.deadlineTime = deadlineTime.withSecond(0);
+    public void setDeadlineTime(LocalDateTime deadlineTime) {
+        this.deadlineTime = deadlineTime == null ? null : deadlineTime.toLocalDate()
+                .atTime(deadlineTime.getHour(), deadlineTime.getMinute());
     }
 }

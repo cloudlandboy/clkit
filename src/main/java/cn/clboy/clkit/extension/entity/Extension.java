@@ -30,7 +30,7 @@ public class Extension extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("文件夹id")
     @Column(nullable = false)
-    @NotNull(message = "invalid folderId")
+    @NotNull
     private Long folderId;
 
     /**
@@ -38,7 +38,7 @@ public class Extension extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("名称")
     @Column(unique = true, nullable = false)
-    @NotBlank(message = "invalid name")
+    @NotBlank
     private String name;
 
     /**
@@ -46,7 +46,7 @@ public class Extension extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("类型")
     @Column(nullable = false)
-    @NotNull(message = "invalid type")
+    @NotNull
     @JsonSerialize
     @Convert(converter = ExtensionTypeEnum.JpaConverter.class)
     private ExtensionTypeEnum type;
@@ -68,7 +68,7 @@ public class Extension extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("排序值")
     @Column(nullable = false)
-    @NotNull(message = "invalid sortValue")
+    @NotNull
     private Integer sortValue;
 
     /**
@@ -76,7 +76,7 @@ public class Extension extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("隐藏")
     @Column(nullable = false)
-    @NotNull(message = "invalid hide")
+    @NotNull
     private Boolean hide;
 
     /**

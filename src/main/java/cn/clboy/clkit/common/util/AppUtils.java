@@ -5,10 +5,12 @@ import cn.hutool.core.io.FileUtil;
 import lombok.Getter;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 资源工具
@@ -107,4 +109,36 @@ public class AppUtils {
         }
         return ids;
     }
+
+    /**
+     * 获取Java源文件
+     *
+     * @param clazz clazz
+     */
+    public static Optional<File> getSrcJavaFile(Class<?> clazz) {
+        String javaFilePath = getSrcJavaFilePath(getHomeDirPath(), clazz);
+        File file = new File(javaFilePath);
+        return file.exists() ? Optional.of(file) : Optional.empty();
+    }
+
+    /**
+     * 获取Java源文件路径
+     *
+     * @param projectPath 项目路径
+     * @param clazz       clazz
+     */
+    public static String getSrcJavaFilePath(String projectPath, Class<?> clazz) {
+        String path = ClassUtils.convertClassNameToResourcePath(clazz.getName());
+        return projectPath + "/src/main/java/" + path + ".java";
+    }
+
+    /**
+     * 获取src资源文件
+     *
+     * @param path 路径
+     */
+    public static File getSrcResourceFile(String path) {
+        return new File(getHomeDirPath() + "/src/main/resources/" + path);
+    }
+
 }

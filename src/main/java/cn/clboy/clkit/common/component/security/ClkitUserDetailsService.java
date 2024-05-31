@@ -23,7 +23,7 @@ public class ClkitUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userService.getByName(username).map(ClkitAuthUser::withClkitUser)
+            return userService.getByName(username).map(ClkitAuthUser::withClkitUser)
                 .orElseThrow(() -> new UsernameNotFoundException("用户名不存在"));
     }
 

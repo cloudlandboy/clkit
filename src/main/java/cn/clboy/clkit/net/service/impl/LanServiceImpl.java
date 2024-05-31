@@ -3,6 +3,7 @@ package cn.clboy.clkit.net.service.impl;
 import cn.clboy.clkit.net.query.ScanPortQuery;
 import cn.clboy.clkit.net.service.LanService;
 import cn.clboy.clkit.net.vo.IpPortListVO;
+import cn.clboy.clkit.os.handler.OsHandler;
 import cn.hutool.core.net.Ipv4Util;
 import cn.hutool.core.net.NetUtil;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -26,6 +29,8 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class LanServiceImpl implements LanService {
 
+    private final OsHandler osHandler;
+
     @Override
     public List<String> getIpList() {
         return NetUtil.localIpv4s().stream().filter(ip -> !NetUtil.LOCAL_IP.equals(ip)).collect(Collectors.toList());
@@ -34,9 +39,21 @@ public class LanServiceImpl implements LanService {
     @Override
     public List<String> scanIp(String baseIp) {
         this.checkIsLocalIp(baseIp);
-        List<String> ipList = Ipv4Util.list(baseIp + "/24", true);
+        String icdr = baseIp + "/24";
+        List<String> ipList = Ipv4Util.list(icdr, true);
         ipList.remove(baseIp);
-        return ipList.parallelStream().filter(ip -> NetUtil.ping(ip, 30)).collect(Collectors.toList());
+        List<String> reachableIpList = ipList.parallelStream()
+                .filter(ip -> NetUtil.ping(ip, 30)).collect(Collectors.toList());
+        try {
+            osHandler.getArpInfo(baseIp).forEach(meta -> {
+                if (!reachableIpList.contains(meta.getIp()) && NetUtil.isInRange(meta.getIp(), icdr)) {
+                    reachableIpList.add(meta.getIp());
+                }
+            });
+        } catch (Exception ex) {
+            //ignore
+        }
+        return new ArrayList<>(reachableIpList);
     }
 
     @Override
@@ -56,7 +73,8 @@ public class LanServiceImpl implements LanService {
             vo.setIp(ip);
             List<Integer> reachablePortList = portList.parallelStream().filter(port -> {
                 try {
-                    Socket socket = new Socket(ip, port);
+                    Socket socket = new Socket();
+                    socket.connect(new InetSocketAddress(ip, port), 60);
                     socket.close();
                     return true;
                 } catch (IOException e) {

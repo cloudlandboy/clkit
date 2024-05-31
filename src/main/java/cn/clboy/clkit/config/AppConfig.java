@@ -1,9 +1,11 @@
 package cn.clboy.clkit.config;
 
 import cn.clboy.clkit.ClkitApplication;
+import cn.clboy.clkit.common.component.jpa.ClkitOpenEntityManagerInViewInterceptor;
 import cn.clboy.clkit.common.util.AppUtils;
 import cn.clboy.clkit.common.web.GlobalExceptionController;
 import cn.clboy.clkit.extension.filter.ExtensionResourceFilter;
+import cn.hutool.core.date.DatePattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -12,11 +14,13 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.orm.hibernate5.support.OpenSessionInViewFilter;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -35,6 +39,11 @@ import java.time.Duration;
 public class AppConfig implements InitializingBean, WebMvcConfigurer {
 
     private final AppProperties appProperties;
+
+    @Bean
+    public ClkitOpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor() {
+        return new ClkitOpenEntityManagerInViewInterceptor();
+    }
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
@@ -74,6 +83,20 @@ public class AppConfig implements InitializingBean, WebMvcConfigurer {
             }
             return clazz.isAnnotationPresent(RestController.class);
         });
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addWebRequestInterceptor(this.openEntityManagerInViewInterceptor());
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
+        registrar.setDateFormatter(DatePattern.NORM_DATE_FORMATTER);
+        registrar.setTimeFormatter(DatePattern.NORM_TIME_FORMATTER);
+        registrar.setDateTimeFormatter(DatePattern.NORM_DATETIME_FORMATTER);
+        registrar.registerFormatters(registry);
     }
 
     @Override

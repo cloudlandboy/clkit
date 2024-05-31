@@ -1,5 +1,6 @@
 package cn.clboy.clkit.os.handler;
 
+import cn.clboy.clkit.os.metadata.LanHostMetadata;
 import cn.clboy.clkit.os.vo.PidInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,6 +38,11 @@ class UnsupportedOsHandler implements OsHandler {
     @Override
     public void openUrl(String url) {
         log.error("不支持的操作系统,无法打开链接");
+    }
+
+    @Override
+    public List<LanHostMetadata> getArpInfo(String assignedIp) {
+        throw new UnsupportedOperationException("不支持的操作系统");
     }
 
 }

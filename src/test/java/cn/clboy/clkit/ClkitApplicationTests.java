@@ -1,11 +1,10 @@
 package cn.clboy.clkit;
 
-import java.io.FileNotFoundException;
-import java.time.LocalDate;
+import java.io.IOException;
 
-class ClkitApplicationTests {
+public class ClkitApplicationTests {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        System.out.println(LocalDate.now().toString());
+    public static void main(String[] args) throws IOException {
+
     }
 }

@@ -1,7 +1,6 @@
 package cn.clboy.clkit.common.component.security;
 
-import cn.clboy.clkit.common.constants.ClkitConstant;
-import org.springframework.beans.factory.annotation.Value;
+import cn.clboy.clkit.common.constants.PermissionConstant;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -25,7 +24,7 @@ public class AuthChecker {
             return false;
         }
         return authentication.getAuthorities().stream().anyMatch(ga -> {
-            if (ClkitConstant.ADMIN_ROLE_CODE.equals(ga.getAuthority())) {
+            if (PermissionConstant.ADMIN_ROLE_CODE.equals(ga.getAuthority())) {
                 return true;
             }
             return PatternMatchUtils.simpleMatch(permission, ga.getAuthority());

@@ -13,6 +13,9 @@ import org.springframework.util.Assert;
  */
 public class SecurityUtils {
 
+    private static ThreadLocal<Boolean> INNER_ENV = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
+
     /**
      * 获取登录用户
      */
@@ -41,5 +44,27 @@ public class SecurityUtils {
         }
         Object principal = authentication.getPrincipal();
         return (principal instanceof ClkitAuthUser) ? (ClkitAuthUser) principal : null;
+    }
+
+    /**
+     * 用内部环境运行
+     *
+     * @param runnable 可运行
+     */
+    public static void runWithInnerEnv(Runnable runnable) {
+        Boolean before = INNER_ENV.get();
+        INNER_ENV.set(Boolean.TRUE);
+        try {
+            runnable.run();
+        } finally {
+            INNER_ENV.set(before);
+        }
+    }
+
+    /**
+     * 使用内部环境运行
+     */
+    public static boolean isRunWithInnerEnv() {
+        return INNER_ENV.get();
     }
 }

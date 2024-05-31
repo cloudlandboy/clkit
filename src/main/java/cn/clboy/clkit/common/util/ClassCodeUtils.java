@@ -12,6 +12,8 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.TypeParameter;
 import org.springframework.util.CollectionUtils;
 
+import java.io.File;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 /**
@@ -106,4 +108,5 @@ public class ClassCodeUtils {
 
         return compilationUnit.toString();
     }
+
 }

@@ -80,7 +80,7 @@ public class ClkitAuthUser implements UserDetails {
                     continue;
                 }
                 for (Permission permission : role.getPermission()) {
-                    authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                    authorities.add(new SimpleGrantedAuthority(permission.getCode()));
                 }
             }
         }

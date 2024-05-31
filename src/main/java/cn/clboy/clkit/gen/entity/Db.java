@@ -27,7 +27,7 @@ public class Db extends BaseEntity implements IUniqueNameEntity {
      * 唯一名称
      */
     @Comment("唯一名称")
-    @NotBlank(message = "invalid name")
+    @NotBlank
     @Column(unique = true, nullable = false)
     private String name;
 
@@ -36,7 +36,7 @@ public class Db extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("数据库平台")
     @Column(nullable = false)
-    @NotNull(message = "invalid platform")
+    @NotNull
     private DbPlatformEnum platform;
 
     /**
@@ -44,7 +44,7 @@ public class Db extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("主机地址")
     @Column(nullable = false)
-    @NotBlank(message = "invalid host")
+    @NotBlank
     private String host;
 
     /**
@@ -52,7 +52,7 @@ public class Db extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("连接端口")
     @Column(nullable = false)
-    @NotNull(message = "invalid port")
+    @NotNull
     private Integer port;
 
     /**
@@ -60,7 +60,7 @@ public class Db extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("用户名")
     @Column(nullable = false)
-    @NotBlank(message = "invalid username")
+    @NotBlank
     private String username;
 
     /**
@@ -68,7 +68,7 @@ public class Db extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("密码")
     @Column(nullable = false)
-    @NotBlank(message = "invalid password")
+    @NotBlank
     private String password;
 
     /**
@@ -76,6 +76,6 @@ public class Db extends BaseEntity implements IUniqueNameEntity {
      */
     @Comment("数据库")
     @Column(nullable = false)
-    @NotBlank(message = "invalid database")
+    @NotBlank
     private String database;
 }
