@@ -24,6 +24,16 @@ public interface ClkitConstant {
     String LOGOUT_API_URL = "/api/auth/logout";
 
     /**
+     * 存储请求token的key
+     */
+    String TOKEN_ATTRIBUTE_KEY = "__clkit_token";
+
+    /**
+     * 存储用户信息的key
+     */
+    String USER_ATTRIBUTE_KEY = "__clkit_user";
+
+    /**
      * 用户ID列名
      */
     String USER_ID_COLUMN_NAME = "user_id";

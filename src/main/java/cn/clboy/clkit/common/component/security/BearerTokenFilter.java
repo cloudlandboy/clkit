@@ -1,5 +1,6 @@
 package cn.clboy.clkit.common.component.security;
 
+import cn.clboy.clkit.common.constants.ClkitConstant;
 import cn.clboy.clkit.upms.entity.ClkitToken;
 import cn.clboy.clkit.upms.service.ClkitTokenService;
 import lombok.AllArgsConstructor;
@@ -51,6 +52,7 @@ public class BearerTokenFilter extends OncePerRequestFilter {
             return;
         }
 
+        request.setAttribute(ClkitConstant.TOKEN_ATTRIBUTE_KEY, accessToken);
         ClkitAuthUser user = userDetailsService.loadUserById(token.getUserId());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(new UsernamePasswordAuthenticationToken(user, accessToken, user.getAuthorities()));
