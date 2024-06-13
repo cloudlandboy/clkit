@@ -4,6 +4,7 @@ import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.gen.dto.GenCrudDTO;
 import cn.clboy.clkit.gen.dto.GenJavaClassDTO;
 import cn.clboy.clkit.gen.service.GenService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2024/04/23 15:23:41
  */
 @RestController
+@Tag(name = "代码生成管理")
 @RequestMapping("gen")
 @RequiredArgsConstructor
 public class GenController {

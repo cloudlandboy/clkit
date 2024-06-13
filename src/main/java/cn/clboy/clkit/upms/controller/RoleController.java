@@ -6,6 +6,7 @@ import cn.clboy.clkit.upms.entity.Role;
 import cn.clboy.clkit.upms.query.RoleQuery;
 import cn.clboy.clkit.upms.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("upms/role")
+@Tag(name = "角色管理")
 public class RoleController {
 
     public final RoleService roleService;

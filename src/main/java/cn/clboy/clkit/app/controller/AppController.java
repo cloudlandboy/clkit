@@ -6,6 +6,7 @@ import cn.clboy.clkit.common.vo.ValueLabelVO;
 import cn.clboy.clkit.common.web.ApiResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @date 2024/04/28 16:50:07
  */
 @RestController
+@Tag(name = "系统管理")
 @RequestMapping("app")
 @RequiredArgsConstructor
 public class AppController {

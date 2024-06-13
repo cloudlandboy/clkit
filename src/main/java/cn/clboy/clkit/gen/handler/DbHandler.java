@@ -1,7 +1,7 @@
 package cn.clboy.clkit.gen.handler;
 
 import cn.clboy.clkit.common.constants.enums.DbPlatformEnum;
-import cn.clboy.clkit.common.handler.HandlerHolder;
+import cn.clboy.clkit.common.holder.HandlerHolder;
 import cn.clboy.clkit.gen.entity.Db;
 import cn.clboy.clkit.gen.vo.TableBasicVO;
 import cn.clboy.clkit.gen.vo.TableInfoVO;

@@ -69,6 +69,7 @@ public class SecurityConfig implements WebSecurityCustomizer {
                                                    AuthenticationManager authenticationManager) throws Exception {
 
         http.authorizeHttpRequests((req) -> {
+            req.antMatchers(ClkitConstant.WEBSOCKET_ENDPOINT_PATH).authenticated();
             req.anyRequest().permitAll();
         });
         http.csrf().disable();

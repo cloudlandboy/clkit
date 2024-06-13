@@ -1,6 +1,9 @@
-package cn.clboy.clkit.websocket;
+package cn.clboy.clkit.websocket.handler;
 
+import cn.clboy.clkit.websocket.ClkitWebSocketSession;
+import cn.clboy.clkit.websocket.WebsocketMessageTypeEnum;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.lang.reflect.ParameterizedType;
 
@@ -21,6 +24,14 @@ public abstract class AbstractWebSocketMessageHandler<T>
         ParameterizedType genericSuperclass = (ParameterizedType) this.getClass().getGenericSuperclass();
         this.payloadClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
     }
+
+
+    @Override
+    public void handleMessage(WebSocketSession session, Object message) {
+        this.doHandleMessage(ClkitWebSocketSession.wrap(session), (T) message);
+    }
+
+    protected abstract void doHandleMessage(ClkitWebSocketSession session, T message);
 
     public String getType() {
         return this.type.getValue();

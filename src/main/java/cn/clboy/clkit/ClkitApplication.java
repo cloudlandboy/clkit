@@ -3,7 +3,7 @@ package cn.clboy.clkit;
 import cn.clboy.clkit.app.entity.ClkitProperty;
 import cn.clboy.clkit.app.service.ClkitPropertyService;
 import cn.clboy.clkit.common.component.jpa.BaseRepositoryImpl;
-import cn.clboy.clkit.common.constants.ClkitConstant;
+import cn.clboy.clkit.common.constants.enums.PropertyEnum;
 import cn.clboy.clkit.common.util.AppUtils;
 import cn.clboy.clkit.config.AppProperties;
 import cn.clboy.clkit.os.handler.OsHandler;
@@ -59,11 +59,11 @@ public class ClkitApplication {
         }
 
         ClkitPropertyService propertyService = context.getBean(ClkitPropertyService.class);
-        ClkitProperty property = propertyService.getByKey(ClkitConstant.DATA_INITIALIZED_KEY);
+        ClkitProperty property = propertyService.getByKey(PropertyEnum.DATA_INITIALIZED.getValue());
         if (property == null) {
             property = new ClkitProperty();
-            property.setName("程序数据已初始化");
-            property.setPropKey(ClkitConstant.DATA_INITIALIZED_KEY);
+            property.setName(PropertyEnum.DATA_INITIALIZED.getLabel());
+            property.setPropKey(PropertyEnum.DATA_INITIALIZED.getValue());
             property.setPropValue(Boolean.FALSE.toString());
             property.setInternal(Boolean.TRUE);
             property.setEditable(Boolean.FALSE);

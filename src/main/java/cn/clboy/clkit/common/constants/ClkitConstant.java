@@ -9,11 +9,6 @@ package cn.clboy.clkit.common.constants;
 public interface ClkitConstant {
 
     /**
-     * 数据初始化key
-     */
-    String DATA_INITIALIZED_KEY = "CLKIT_DATA_INITIALIZED";
-
-    /**
      * 认证API URL
      */
     String AUTH_API_URL = "/api/auth/token";
@@ -52,4 +47,9 @@ public interface ClkitConstant {
      * 角色编码前缀
      */
     String ROLE_CODE_PREFIX = "ROLE_";
+
+    /**
+     * websocket端点路径
+     */
+    String WEBSOCKET_ENDPOINT_PATH = "/api/websocket";
 }

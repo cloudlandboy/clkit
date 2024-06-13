@@ -17,4 +17,12 @@ public interface ClkitPropertyService extends CrudService<ClkitProperty, Long> {
      * @param key 关键
      */
     ClkitProperty getByKey(String key);
+
+    /**
+     * 按id更新值
+     *
+     * @param id    ID
+     * @param value 值
+     */
+    ClkitProperty updateValueById(Long id, String value);
 }

@@ -1,6 +1,6 @@
 package cn.clboy.clkit.app.handler;
 
-import cn.clboy.clkit.common.handler.HandlerHolder;
+import cn.clboy.clkit.common.holder.HandlerHolder;
 
 import java.util.List;
 

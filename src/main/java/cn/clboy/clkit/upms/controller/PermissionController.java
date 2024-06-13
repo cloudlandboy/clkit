@@ -4,6 +4,7 @@ import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.upms.service.PermissionService;
 import cn.hutool.core.lang.tree.Tree;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "权限管理")
 @RequestMapping("upms/permission")
 public class PermissionController {
 

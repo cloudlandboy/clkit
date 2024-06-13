@@ -21,6 +21,12 @@ import java.util.stream.Collectors;
 public class UserInfoVO {
 
     /**
+     * ID
+     */
+    @Schema(description = "ID")
+    private Long id;
+
+    /**
      * 用户名
      */
     @Schema(description = "用户名")
@@ -58,9 +64,10 @@ public class UserInfoVO {
 
     public static UserInfoVO with(ClkitUser user, Collection<? extends GrantedAuthority> authorities) {
         UserInfoVO infoVO = new UserInfoVO();
+        infoVO.setId(user.getId());
         infoVO.setName(user.getName());
         infoVO.setNickname(user.getNickname());
-        infoVO.setRealName(user.getRealName());//帐号密码
+        infoVO.setRealName(user.getRealName());
         infoVO.setEmail(user.getEmail());
         infoVO.setRoleNameList(user.getRole().stream().map(Role::getName).collect(Collectors.toList()));
         infoVO.setPermissionList(authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));

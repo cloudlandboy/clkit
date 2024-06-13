@@ -1,6 +1,6 @@
-package cn.clboy.clkit.websocket;
+package cn.clboy.clkit.websocket.handler;
 
-import cn.clboy.clkit.common.handler.HandlerHolder;
+import cn.clboy.clkit.common.holder.HandlerHolder;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
@@ -15,6 +15,6 @@ public interface WebSocketMessageHandler<T> {
 
     Class<T> getPayloadClass();
 
-    void handleMessage(WebSocketSession session, T message);
+    void handleMessage(WebSocketSession session, Object message);
 
 }

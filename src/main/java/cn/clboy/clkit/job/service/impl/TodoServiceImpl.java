@@ -1,16 +1,16 @@
 package cn.clboy.clkit.job.service.impl;
 
-import cn.clboy.clkit.common.constants.enums.IValueLabelEnum;
-import cn.clboy.clkit.common.constants.enums.JobReminderTimeEnum;
-import cn.clboy.clkit.common.constants.enums.JobRepeatModeEnum;
-import cn.clboy.clkit.common.constants.enums.TodoStatusEnum;
-import cn.clboy.clkit.common.service.AppDataHandlerCrudServiceImpl;
+import cn.clboy.clkit.common.constants.enums.*;
 import cn.clboy.clkit.common.service.CrudServiceImpl;
 import cn.clboy.clkit.common.util.SecurityUtils;
+import cn.clboy.clkit.common.vo.NotificationVO;
 import cn.clboy.clkit.job.entity.Todo;
 import cn.clboy.clkit.job.query.TodoQuery;
 import cn.clboy.clkit.job.repository.TodoRepository;
 import cn.clboy.clkit.job.service.TodoService;
+import cn.clboy.clkit.websocket.WebsocketMessageTypeEnum;
+import cn.clboy.clkit.websocket.WebsocketSessionHolder;
+import cn.clboy.clkit.websocket.message.JsonMessage;
 import cn.hutool.core.util.IdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,6 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,6 +71,13 @@ public class TodoServiceImpl extends CrudServiceImpl<Todo, Long, TodoRepository>
 
     @Override
     public Todo updateById(Todo dto) {
+        Todo todo = this.getById(dto.getId());
+
+        TodoStatusEnum status = this.initialStatus(dto.getDeadlineTime());
+        if (TodoStatusEnum.UNDONE == status && todo.getStatus() == TodoStatusEnum.EXPIRED) {
+            dto.setStatus(status);
+        }
+        dto.setVersion(todo.getVersion());
         dto.setReminderTime(dto.getReminder().getCalculator().calculate(dto.getDeadlineTime()).orElse(null));
         return super.updateById(dto);
     }
@@ -98,7 +104,16 @@ public class TodoServiceImpl extends CrudServiceImpl<Todo, Long, TodoRepository>
         });
         log.debug("扫描未完成需提醒的待办，数量：{}", reminderList.size());
         for (Todo todo : reminderList) {
-            log.warn("你有未完成的待办：{}", todo.getName());
+            try {
+                NotificationVO notification = new NotificationVO();
+                notification.setType(NotificationTypeEnum.WARNING);
+                notification.setTitle("待办提醒");
+                notification.setMessage(todo.getName());
+                WebsocketSessionHolder.sendMessage(todo.getUserId(),
+                        new JsonMessage(WebsocketMessageTypeEnum.NOTIFICATION.getValue(), notification));
+            } catch (Exception ex) {
+                log.error("待办提醒出错", ex);
+            }
         }
     }
 
@@ -116,10 +131,6 @@ public class TodoServiceImpl extends CrudServiceImpl<Todo, Long, TodoRepository>
             return;
         }
         for (Todo todo : expiredList) {
-            if (todo.getReminder() != JobReminderTimeEnum.PUNCTUAL) {
-                //正点由提醒处理
-                log.warn("你的待办 \"{}\" 已过截止日期", todo.getName());
-            }
             try {
                 transactionTemplate.executeWithoutResult(ac -> {
                     SecurityUtils.runWithInnerEnv(() -> {

@@ -5,6 +5,7 @@ import cn.clboy.clkit.gen.entity.Db;
 import cn.clboy.clkit.gen.service.DbService;
 import cn.clboy.clkit.gen.vo.TableBasicVO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,7 @@ import java.util.List;
  * @date 2024/04/18 16:44:10
  */
 @RestController
+@Tag(name = "数据库管理")
 @RequestMapping("gen/db")
 @RequiredArgsConstructor
 public class DbController {

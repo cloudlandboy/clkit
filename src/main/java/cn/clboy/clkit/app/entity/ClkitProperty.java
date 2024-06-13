@@ -41,6 +41,12 @@ public class ClkitProperty extends BaseEntity implements IUniqueNameEntity {
     private String propValue;
 
     /**
+     * 说明
+     */
+    @Comment("说明")
+    private String description;
+
+    /**
      * 内置的
      */
     @Comment("内置的")

@@ -9,6 +9,7 @@ import cn.clboy.clkit.upms.query.UserQuery;
 import cn.clboy.clkit.upms.service.ClkitUserService;
 import cn.clboy.clkit.upms.vo.UserInfoVO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import javax.validation.groups.Default;
  */
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "用户管理")
 @RequestMapping("upms/user")
 public class UserController {
 

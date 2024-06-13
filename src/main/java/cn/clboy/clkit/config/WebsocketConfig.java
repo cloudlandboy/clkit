@@ -1,7 +1,8 @@
 package cn.clboy.clkit.config;
 
-import cn.clboy.clkit.websocket.JsonWebSocketHandler;
+import cn.clboy.clkit.common.constants.ClkitConstant;
 import cn.clboy.clkit.websocket.TokenHandshakeInterceptor;
+import cn.clboy.clkit.websocket.handler.JsonWebSocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +38,7 @@ public class WebsocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(jsonWebSocketHandler(), "/api/websocket")
+        registry.addHandler(jsonWebSocketHandler(), ClkitConstant.WEBSOCKET_ENDPOINT_PATH)
                 .setAllowedOrigins("*").addInterceptors(tokenHandshakeInterceptor());
     }
 }

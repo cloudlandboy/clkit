@@ -13,7 +13,7 @@ import java.lang.reflect.ParameterizedType;
  * @author clboy
  * @date 2024/04/18 16:12:25
  */
-public class JsonAttributeConverter<T> implements AttributeConverter<T, String> {
+public abstract class JsonAttributeConverter<T> implements AttributeConverter<T, String> {
     protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final JavaType modelType;
 

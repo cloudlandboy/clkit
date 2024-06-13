@@ -25,6 +25,11 @@ public interface PermissionConstant {
     String APP_IMPORT = "app_import";
 
     /**
+     * 系统-参数-配置
+     */
+    String APP_PROPERTY_CONFIG = "app_property_config";
+
+    /**
      * 扩展-管理
      */
     String EXTENSION_MANAGE = "extension_manage";
@@ -113,4 +118,9 @@ public interface PermissionConstant {
      * 系统-权限-查看
      */
     String UPMS_PERMISSION_VIEW = "upms_permission_view";
+
+    /**
+     * 代码-正则-管理
+     */
+    String CODE_REGEXP_MANAGE = "code_regexp_manage";
 }

@@ -1,7 +1,7 @@
 package cn.clboy.clkit.extension.handler;
 
 import cn.clboy.clkit.common.constants.enums.ExtensionTypeEnum;
-import cn.clboy.clkit.common.handler.HandlerHolder;
+import cn.clboy.clkit.common.holder.HandlerHolder;
 import cn.clboy.clkit.extension.entity.Extension;
 
 /**

@@ -14,9 +14,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum WebsocketMessageTypeEnum implements IValueLabelEnum<WebsocketMessageTypeEnum> {
 
-    PING("0", "ping"),
-    PONG("1", "pong"),
-    SYSTEM_NOTICE("2", "系统通知"),
+    PING("ping", "ping"),
+    PONG("pong", "pong"),
+    NOTIFICATION("notification", "通知"),
     ;
 
     private final String value;

@@ -3,6 +3,7 @@ package cn.clboy.clkit.gen.controller;
 import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.gen.entity.DbLangType;
 import cn.clboy.clkit.gen.service.DbLangTypeService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +18,7 @@ import java.util.List;
  * @date 2024/04/18 17:16:28
  */
 @RestController
+@Tag(name = "语言映射管理")
 @RequiredArgsConstructor
 @RequestMapping("gen/db_lang_type")
 public class DbLangTypeController {

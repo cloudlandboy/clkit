@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.clboy</groupId>
     <artifactId>clkit</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <name>clkit</name>
     <description>软件开发工具箱</description>
     <packaging>jar</packaging>

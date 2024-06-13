@@ -3,6 +3,7 @@ package cn.clboy.clkit.os.controller;
 import cn.clboy.clkit.common.web.ApiResult;
 import cn.clboy.clkit.os.service.ProcessService;
 import cn.clboy.clkit.os.vo.PidInfoVO;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("os/process")
 @RequiredArgsConstructor
+@Tag(name = "进程管理")
 public class ProcessController {
 
     private final ProcessService processService;
