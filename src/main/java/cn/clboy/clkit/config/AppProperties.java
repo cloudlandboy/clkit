@@ -1,6 +1,5 @@
 package cn.clboy.clkit.config;
 
-import cn.clboy.clkit.common.util.AppUtils;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 public class AppProperties {
 
     public static final String DEFAULT_DATA_DIR_PATH = "~/.clkit";
-    public static final String DEFAULT_EXTENSION_DIR_PATH = AppUtils.getHomeFile("clkit_extensions").getAbsolutePath();
 
     /**
      * 版本
@@ -33,12 +31,6 @@ public class AppProperties {
      */
     @NotBlank
     private String dataDirPath = DEFAULT_DATA_DIR_PATH;
-
-    /**
-     * 扩展目录路径
-     */
-    @NotBlank
-    private String extensionDirPath = DEFAULT_EXTENSION_DIR_PATH;
 
     /**
      * 启动时打开

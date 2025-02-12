@@ -13,7 +13,3 @@ VALUES (1, NOW(), NOW(), 'ROLE_ADMIN', '管理员');
 -- 用户角色
 INSERT INTO CLKIT_USER_ROLE(clkit_user_id, role_id)
 VALUES (1, 1);
-
--- 推荐扩展
-INSERT INTO EXTENSION(name, url, path, type, sort_value, folder_id, hide, created_time, updated_time)
-VALUES ('中国色', 'https://www.zhongguose.com', 'https://www.zhongguose.com', '1', 0, 0, false, NOW(), NOW())

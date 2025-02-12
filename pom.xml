@@ -134,19 +134,20 @@
     </dependencyManagement>
 
     <build>
+        <finalName>clkit</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
-                    <exclude>**/*.ico</exclude>
+                    <exclude>public/**</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <includes>
-                    <include>**/*.ico</include>
+                    <include>public/**</include>
                 </includes>
             </resource>
         </resources>

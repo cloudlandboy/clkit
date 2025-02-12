@@ -182,13 +182,13 @@ public class PermissionServiceImpl extends CrudServiceImpl<Permission, Long, Per
             properties.load(new ClassPathResource("permission.properties").getInputStream());
         }
 
-        Map<String, Permission> existsMap = this.getAll().stream()
+        Map<String, Permission> dbDataMap = this.getAll().stream()
                 .collect(Collectors.toMap(Permission::getCode, Function.identity()));
         properties.forEach((code, name) -> {
             if (code.toString().startsWith(ClkitConstant.ROLE_CODE_PREFIX)) {
                 return;
             }
-            Permission permission = existsMap.remove(code.toString());
+            Permission permission = dbDataMap.remove(code.toString());
             if (permission == null) {
                 permission = new Permission();
                 permission.setName(name.toString());
@@ -203,8 +203,8 @@ public class PermissionServiceImpl extends CrudServiceImpl<Permission, Long, Per
             }
         });
 
-        if (!existsMap.isEmpty()) {
-            List<Long> rmIds = existsMap.values().stream().map(Permission::getId).collect(Collectors.toList());
+        if (!dbDataMap.isEmpty()) {
+            List<Long> rmIds = dbDataMap.values().stream().map(Permission::getId).collect(Collectors.toList());
             this.repository.deleteAllByIdInBatch(rmIds);
         }
     }

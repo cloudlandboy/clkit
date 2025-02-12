@@ -8,8 +8,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,9 +20,6 @@ public class AppUtils {
 
     @Getter
     private static String dataDirPath;
-
-    @Getter
-    private static String extensionDirPath;
 
     @Getter
     private static AppProperties appProperties;
@@ -41,9 +36,6 @@ public class AppUtils {
         File appDirfile = new File(FileUtil.getAbsolutePath(appProperties.getDataDirPath()));
         Assert.isTrue(appDirfile.exists() || appDirfile.mkdir(), "创建数据目录出错");
         AppUtils.dataDirPath = appDirfile.getAbsolutePath();
-        File extensionDirFile = new File(FileUtil.getAbsolutePath(appProperties.getExtensionDirPath()));
-        Assert.isTrue(extensionDirFile.exists() || extensionDirFile.mkdir(), "创建扩展目录出错");
-        AppUtils.extensionDirPath = extensionDirFile.getAbsolutePath();
     }
 
     /**
@@ -69,45 +61,6 @@ public class AppUtils {
      */
     public static File getHomeFile(String path) {
         return new File(HOME_DIR_PATH, path);
-    }
-
-    /**
-     * 获取扩展目录文件
-     *
-     * @param id ID
-     */
-    public static File getExtensionDirFile(Long id) {
-        return new File(extensionDirPath, id.toString());
-    }
-
-    /**
-     * 获取扩展文件
-     *
-     * @param id   ID
-     * @param path 路径
-     */
-    public static File getExtensionFile(Long id, String path) {
-        return new File(getExtensionDirFile(id), path);
-    }
-
-    /**
-     * 列出存在的扩展id
-     */
-    public static List<Long> listExistsExtensionIds() {
-        File file = new File(extensionDirPath);
-        File[] dirs = file.listFiles(File::isDirectory);
-        if (dirs == null) {
-            return new ArrayList<>();
-        }
-        List<Long> ids = new ArrayList<>(dirs.length);
-        for (File dir : dirs) {
-            try {
-                ids.add(Long.parseLong(dir.getName()));
-            } catch (NumberFormatException e) {
-                //ignore
-            }
-        }
-        return ids;
     }
 
     /**

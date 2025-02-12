@@ -4,7 +4,6 @@ import cn.clboy.clkit.ClkitApplication;
 import cn.clboy.clkit.common.component.jpa.ClkitOpenEntityManagerInViewInterceptor;
 import cn.clboy.clkit.common.util.AppUtils;
 import cn.clboy.clkit.common.web.GlobalExceptionController;
-import cn.clboy.clkit.extension.filter.ExtensionResourceFilter;
 import cn.hutool.core.date.DatePattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,15 +58,6 @@ public class AppConfig implements InitializingBean, WebMvcConfigurer {
         bean.setFilter(new CorsFilter(cfgSource));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
         bean.setName("corsFilter");
-        return bean;
-    }
-
-    @Bean
-    public FilterRegistrationBean<ExtensionResourceFilter> extensionResourceFilterRegistrationBean() {
-        FilterRegistrationBean<ExtensionResourceFilter> bean = new FilterRegistrationBean<>();
-        bean.setFilter(new ExtensionResourceFilter());
-        bean.setName("extensionResourceFilter");
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 3);
         return bean;
     }
 

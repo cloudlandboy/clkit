@@ -14,8 +14,13 @@ import lombok.Getter;
 public enum PropertyEnum implements IValueLabelEnum<PropertyEnum> {
 
     HOME_PATH("CLKIT_HOME_PATH", "主页路径", "路由地址", "/", true),
-    CLKIT_EXTENSION_MODE("CLKIT_EXTENSION_MODE", "扩展模式", "MENU/TAB", "MENU", true),
-    DATA_INITIALIZED("CLKIT_DATA_INITIALIZED", "程序数据已初始化", "", "false", false);
+    DATA_INITIALIZED("CLKIT_DATA_INITIALIZED", "程序数据已初始化", "", "false", false),
+    DEEPLX_HOST("DEEPLX_HOST", "DeepLX地址", "https://deeplx.owo.network",
+            "http://127.0.0.1:1188", true),
+    DEEPLX_TOKEN("DEEPLX_TOKEN", "DeepLX密钥", "https://deeplx.owo.network",
+            "", true),
+    ;
+
 
     private final String value;
     private final String label;

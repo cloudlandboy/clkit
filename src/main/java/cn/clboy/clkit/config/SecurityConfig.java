@@ -93,7 +93,5 @@ public class SecurityConfig implements WebSecurityCustomizer {
     public void customize(WebSecurity web) {
         web.debug(false);
         web.ignoring().antMatchers("/h2-console/**");
-        //扩展
-        web.ignoring().antMatchers("/extension/**", HttpMethod.GET.name());
     }
 }

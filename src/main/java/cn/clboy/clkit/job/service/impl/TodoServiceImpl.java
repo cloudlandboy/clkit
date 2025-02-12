@@ -115,12 +115,12 @@ public class TodoServiceImpl extends CrudServiceImpl<Todo, Long, TodoRepository>
                 log.error("待办提醒出错", ex);
             }
         }
+        scanExpired();
     }
 
     /**
      * 扫描已过期
      */
-    @Scheduled(cron = "0 * * * * ?")
     public void scanExpired() {
         List<Todo> expiredList = this.repository.findAll(builder -> {
             builder.equal(Todo::getStatus, TodoStatusEnum.UNDONE);

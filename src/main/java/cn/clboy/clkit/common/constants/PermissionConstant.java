@@ -30,11 +30,6 @@ public interface PermissionConstant {
     String APP_PROPERTY_CONFIG = "app_property_config";
 
     /**
-     * 扩展-管理
-     */
-    String EXTENSION_MANAGE = "extension_manage";
-
-    /**
      * 代码生成-增删改查
      */
     String GEN_CRUD = "gen_crud";

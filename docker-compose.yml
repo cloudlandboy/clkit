@@ -1,0 +1,11 @@
+services:
+  clkit:
+    build:
+      context: ./
+    restart: always
+    container_name: clkit
+    image: clkit
+    volumes:
+      - ~/.clkit:/root/.clkit
+    ports:
+      - "28288:28288"
